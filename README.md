@@ -21,6 +21,7 @@
 [Get started](#get-started) ·
 [First run](docs/GETTING_STARTED.md) ·
 [Secure defaults](docs/SECURE_DEFAULTS.md) ·
+[Gateway](docs/GATEWAY.md) ·
 [Doctor](docs/DOCTOR.md) ·
 [Upstream](#upstream) ·
 [License](#license-and-credits)
@@ -80,6 +81,8 @@ hermes doctor       # diagnose the install
 
 **Secure defaults (approvals / secrets / egress):** [docs/SECURE_DEFAULTS.md](docs/SECURE_DEFAULTS.md).
 
+**Gateway (Telegram / Discord / Slack):** [docs/GATEWAY.md](docs/GATEWAY.md).
+
 Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
 
 Upstream one-liner installs and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); this fork is meant to be developed and run from source.
@@ -89,9 +92,9 @@ Upstream one-liner installs and Desktop packages still belong to [NousResearch/h
 > [!IMPORTANT]
 > **Status:** M1 (CLI/TUI Linux baseline) complete. What works today, what is partial, and what's next:
 >
-> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [secure defaults](docs/SECURE_DEFAULTS.md) (`approvals.mode: manual`); monthly upstream sync cadence; [Nexus smoke CI](.github/workflows/nexus-smoke.yml); protected fork markers.
-> - **Partly there:** interactive chat still needs a real provider key; gateway channels off by default; Desktop later.
-> - **Next:** gateway recipes, broader evals — [docs/STATUS.md](docs/STATUS.md).
+> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [secure defaults](docs/SECURE_DEFAULTS.md); [gateway recipes](docs/GATEWAY.md); monthly upstream sync cadence; [Nexus smoke CI](.github/workflows/nexus-smoke.yml); protected fork markers.
+> - **Partly there:** interactive chat still needs a real provider key; gateway tokens optional; Desktop later.
+> - **Next:** broader eval/smoke scripts — [docs/STATUS.md](docs/STATUS.md).
 
 ## Upstream
 

@@ -86,6 +86,11 @@ nexus-first-run:
 nexus-secure-defaults:
     scripts/hermes-python scripts/ci/nexus_secure_defaults_check.py
 
+# Gateway recipe docs + hermes gateway --help (no bot tokens)
+[group('check')]
+nexus-gateway-docs:
+    scripts/hermes-python scripts/ci/nexus_gateway_docs_check.py
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:

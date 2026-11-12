@@ -60,6 +60,10 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
         ("mode: manual", "chmod 600", "collaborative"),
     ),
     (
+        "docs/GATEWAY.md",
+        ("hermes gateway setup", "TELEGRAM_BOT_TOKEN", "DISCORD_BOT_TOKEN", "SLACK_BOT_TOKEN"),
+    ),
+    (
         "hermes_cli/config_defaults.py",
         ("Nexus collaborative default", '"mode": "manual"'),
     ),

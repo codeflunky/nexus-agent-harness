@@ -12,8 +12,9 @@ After `source ./activate` (or PM setup), these are **OK to ignore** until you ne
 | Missing API keys / OpenRouter not configured | No inference provider | `hermes setup` or `hermes model` |
 | OAuth not logged in (Nous Portal, Codex, MiniMax, xAI, …) | Optional auth backends | Only if you use that provider |
 | Docker/Podman not found (optional) | No container terminal backend | Only if you want Docker/SSH sandbox backends |
-| Optional packages (`discord.py`, `python-telegram-bot`, …) | Messaging extras not installed | Gateway / platform features |
+| Optional packages (`discord.py`, `python-telegram-bot`, …) | Messaging extras not installed | Gateway / platform features — [GATEWAY.md](GATEWAY.md) |
 | Discord / X / other tool tokens missing | Platform tools disabled | When enabling that tool |
+| Bot tokens unset (`TELEGRAM_*` / `DISCORD_*` / `SLACK_*`) | Gateway platforms idle | Optional; recipes in [GATEWAY.md](GATEWAY.md) |
 | Chromium not installed | Local browser tool unavailable | Browser automation |
 | Skills Hub not initialized | Skills catalog not pulled | `hermes skills list` when you need it |
 | `computer_use` / `vision` / `video` “system dependency not met” | Optional multimodal stacks | When you need those tools |

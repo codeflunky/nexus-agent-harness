@@ -79,6 +79,7 @@ python3 scripts/ci/nexus_secure_defaults_check.py
 ## Related
 
 - [docs/GETTING_STARTED.md](GETTING_STARTED.md) — first-run path  
+- [docs/GATEWAY.md](GATEWAY.md) — Telegram / Discord / Slack recipes  
 - [docs/DOCTOR.md](DOCTOR.md) — expected setup gaps  
 - [docs/UPSTREAM.md](UPSTREAM.md) — origin-only updates + Hermes sync cadence  
 - [SECURITY.md](../SECURITY.md) — upstream trust model  

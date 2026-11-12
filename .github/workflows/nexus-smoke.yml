@@ -55,6 +55,13 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/nexus_secure_defaults_check.py
 
+      - name: Gateway recipe docs
+        env:
+          HERMES_PYTHON: ${{ steps.pm.outputs.python-path }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/nexus_gateway_docs_check.py
+
       - name: Install ui-tui deps and build
         run: |
           set -euo pipefail
