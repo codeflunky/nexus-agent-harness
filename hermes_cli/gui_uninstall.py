@@ -25,7 +25,8 @@ def _env_dir(var: str, fallback: Path) -> Path:
 
 
 def desktop_userdata_dir() -> Path:
-    """Electron ``app.getPath('userData')`` for an app named "Hermes" on each platform (GUI-only state)."""
+    """Electron ``app.getPath('userData')`` for an app named "Hermes" on each platform (GUI-only state).
+    Product display name is Nexus; packaged app id remains Hermes until Desktop rebrand."""
     home = Path.home()
     if sys.platform == "darwin":
         return home / "Library" / "Application Support" / "Hermes"
@@ -55,7 +56,7 @@ def desktop_install_record() -> Path:
 def packaged_gui_app_paths() -> list[Path]:
     """Standard install locations of the packaged desktop distributable for the current OS. Every candidate
     is returned; the caller filters to those that exist. Never globs system-wide — only the well-known
-    electron-builder output locations for the "Hermes" product."""
+    electron-builder output locations for the "Hermes" product (packaged app id)."""
     home = Path.home()
     if sys.platform == "darwin":
         return [Path("/Applications/Hermes.app"), home / "Applications" / "Hermes.app"]

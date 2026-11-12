@@ -1307,7 +1307,7 @@ def recover_at_startup(*, say: Optional[Callable[[str], None]] = None, gateway_s
         if not lazy_installs_allowed():
             for feature in features:
                 report(_noticed(f"⚠ {feature.label} moved out of core and its '{feature.plugin}' plugin is not "
-                                f"installed, so it is off. security.allow_lazy_installs is off, so Hermes did not "
+                                f"installed, so it is off. security.allow_lazy_installs is off, so Nexus did not "
                                 f"fetch it: run `{_install_command(feature.plugin, home)}`.", home, feature, True))
             return []
         installed = []

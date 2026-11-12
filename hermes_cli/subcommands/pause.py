@@ -37,7 +37,7 @@ def cmd_resume(args: argparse.Namespace) -> int:
     if disengage():
         print("▶️  Hermes resumed — dispatch picks up on the next tick.")
     else:
-        print(f"Hermes is not paused (no sentinel at {sentinel_path()}).")
+        print(f"Nexus is not paused (no sentinel at {sentinel_path()}).")
     return 0
 
 
@@ -48,7 +48,7 @@ def build_pause_parser(subparsers) -> None:
         description="Engage the global emergency stop. Halts NEW work only — cron "
             "dispatch, kanban dispatch, and new gateway turns — until "
             "`hermes resume`. Interactive CLI, TUI and Desktop turns are gateway turns, so they "
-            "are held too: each gets \"Hermes is paused\" with the reason. Turns already "
+            "are held too: each gets \"Nexus is paused\" with the reason. Turns already "
             "running finish; in-flight work is never killed.")
     pause_parser.add_argument(
         "--reason", default=None, help="Optional reason stored in the sentinel and shown to users")

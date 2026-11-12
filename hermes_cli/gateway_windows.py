@@ -55,7 +55,7 @@ _ACCESS_DENIED_PATTERN = re.compile(rf"({_ACCESS_DENIED_WORDS})", re.IGNORECASE)
 _LAST_SPAWN_BREAKAWAY_FALLBACK: dict = {"fallback": False}
 
 _TASK_NAME_DEFAULT = "Hermes_Gateway"
-_TASK_DESCRIPTION = "Hermes Agent Gateway - Messaging Platform Integration"
+_TASK_DESCRIPTION = "Nexus Agent Gateway - Messaging Platform Integration"
 _TASK_LOGON_DELAY = "PT30S"
 _TASK_RESTART_INTERVAL = "PT1M"
 _TASK_RESTART_COUNT = 999
@@ -123,7 +123,7 @@ def _hermes_home() -> Path:
 
 
 def hermes_service_roots() -> tuple[str, ...]:
-    """Directories a Hermes-owned SCM service binary lives under: the checkout (its ``venv`` included),
+    """Directories a Nexus-owned SCM service binary lives under: the checkout (its ``venv`` included),
     the running interpreter's ``Scripts`` dir (``hermes.exe`` shim) and the ``gateway-service`` launcher dir."""
     project_root = Path(__file__).resolve().parent.parent
     return (str(project_root), str(Path(sys.executable).parent), str(_hermes_home() / "gateway-service"))
@@ -134,8 +134,8 @@ def _normalize_windows_path(value: str) -> str:
 
 
 def hermes_owns_windows_service(name: str, binpath: str, hermes_roots: tuple[str, ...]) -> bool:
-    """Positive ownership of an SCM service: Hermes-named (``hermes*``) or its binary path starts under a
-    Hermes root. Pure so it is testable off-Windows. A Scheduled-Task-launched gateway descends from
+    """Positive ownership of an SCM service: Nexus-named (``hermes*``) or its binary path starts under a
+    Nexus root. Pure so it is testable off-Windows. A Scheduled-Task-launched gateway descends from
     ``svchost.exe`` hosting ``Schedule``; without this gate the updater took Task Scheduler for the
     gateway's supervisor and ``sc.exe stop Schedule`` aborted every update (#97208)."""
     normalized_name = "".join(char for char in name.casefold() if char.isalnum())
@@ -146,7 +146,7 @@ def hermes_owns_windows_service(name: str, binpath: str, hermes_roots: tuple[str
 
 
 def _preserve_hermes_home_path(path: str | Path) -> str:
-    r"""Render Hermes-owned paths under the configured HERMES_HOME spelling.
+    r"""Render Nexus-owned paths under the configured HERMES_HOME spelling.
 
     ``%LOCALAPPDATA%\hermes`` may be a symlink/junction to another drive; launcher files must not
     bake in the resolved target for paths under HERMES_HOME.
@@ -232,7 +232,7 @@ def _is_running_as_admin() -> bool:
 
 
 def _current_profile_cli_args() -> list[str]:
-    """Return CLI args that preserve the current Hermes profile."""
+    """Return CLI args that preserve the current Nexus profile."""
     from hermes_cli.gateway import _profile_arg
 
     profile_arg = _profile_arg()

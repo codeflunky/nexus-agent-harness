@@ -211,7 +211,7 @@ class SessionEfficiency:
     def observe_cache(
         self, route: dict[str, str], usage: Any, started_ns: int, ended_ns: int, *, expected: bool,
     ) -> str | None:
-        """A cold primary read after a warm one on the same route is a break Hermes did not announce
+        """A cold primary read after a warm one on the same route is a break Nexus did not announce
         (``expected``: Hermes already counted the cause); a gap past the cache TTL is plain expiry."""
         read = _int(usage.get("cache_read_tokens")) if isinstance(usage, dict) else None
         if read is None:

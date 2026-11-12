@@ -300,7 +300,7 @@ def recover_at_startup(name: str, *, say: Optional[Callable[[str], None]] = None
     from pm.install import lazy_installs_allowed
     if not lazy_installs_allowed():
         report(f"⚠ Memory provider '{name}' is not installed, so external memory is off for this session. "
-               f"security.allow_lazy_installs is off, so Hermes did not fetch it: "
+               f"security.allow_lazy_installs is off, so Nexus did not fetch it: "
                f"run `{_install_command(name, home)}`.")
         return False
     # Agent init cannot answer a dependency prompt: under the CLI the prompt_toolkit input owns the

@@ -72,7 +72,7 @@ def offer_agent_import(hermes_home: Path, from_setup: bool = True) -> str:
     print_header("Coming from another agent?", gap=True)
     context = ("Found on this computer: " + ", ".join(
         f"{s.label} ({str(p).replace(user_home, '~', 1)})" for s, p in found) + ".",
-        "Hermes can bring over its settings, memories, skills and MCP servers.",
+        "Nexus can bring over its settings, memories, skills and MCP servers.",
         "You'll see a preview and confirm before anything changes.")
     _info(*context)
     names = " or ".join(s.label for s, _ in found) if len(found) <= 2 else "any of them"
@@ -92,7 +92,7 @@ def _pick_sources(found: list[tuple[ImportSource, Path]]) -> list[ImportSource]:
     from hermes_cli.setup import print_info, prompt_checklist
     if len(found) == 1:
         return [found[0][0]]
-    picked = prompt_checklist("Which agents should Hermes import from?", [s.label for s, _ in found],
+    picked = prompt_checklist("Which agents should Nexus import from?", [s.label for s, _ in found],
                               list(range(len(found))))
     if not picked:
         print_info("Nothing selected, so nothing was imported.")
@@ -109,7 +109,7 @@ def _ensure_plugin(hermes_home: Path) -> bool:
     from hermes_cli.setup import _info, print_warning
     present = plugin_present(PLUGIN, hermes_home)
     if not present:
-        _info(None, f"Importing is done by the '{PLUGIN}' plugin from the Hermes plugin catalog. "
+        _info(None, f"Importing is done by the '{PLUGIN}' plugin from the Nexus plugin catalog. "
                     "Installing it now...")
     try:
         if present:
@@ -162,7 +162,7 @@ def _import_child(source: ImportSource, hermes_home: Path, extra_args: tuple[str
     argv = [sys.executable, "-P", "-m", "hermes_cli.main", *selector, "import-agent", source.name,
             *(source.extra_args if from_setup else ()), *extra_args, *(["--from-setup"] if from_setup else [])]
     env = served_profile_child_env(target_home=hermes_home)
-    if os.environ.get("PYTHONPATH"):  # this same interpreter running Hermes: keep the source tree
+    if os.environ.get("PYTHONPATH"):  # this same interpreter running Nexus: keep the source tree
         env["PYTHONPATH"] = os.environ["PYTHONPATH"]  # a checkout launched by path, which it strips
     # health: allow HX006 -- interactive child: the user reads its preview and answers its prompts
     returncode = subprocess.run(argv, env=env, check=False).returncode

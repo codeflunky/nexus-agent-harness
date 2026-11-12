@@ -57,7 +57,7 @@ def _run_nous_flow(config: dict, *, context: str, cancel_exc: tuple, cancel_line
 def _run_portal_one_shot(config: dict) -> None:
     """One-shot Nous Portal setup (``hermes setup --portal`` / ``hermes portal``)."""
     from hermes_cli.setup import _info, _print_banner, _record_setup_completed, print_error, print_info, print_success
-    _print_banner("│     ☤ Hermes Setup — Nous Portal (one-shot)             │")
+    _print_banner("│     ☤ Nexus Setup — Nous Portal (one-shot)             │")
     _info(None, "  One subscription, 300+ models, plus the Tool Gateway:",
           "    web search, image generation, TTS, browser automation",
           "    — all routed through your Nous Portal sub.", None,
@@ -87,7 +87,7 @@ def _run_portal_one_shot(config: dict) -> None:
 
 def _imported_model_label(config: dict) -> str:
     """``"<provider> · <model>"`` when *config* (just written by an agent import) names a model
-    Hermes has credentials for, else ``""``."""
+    Nexus has credentials for, else ``""``."""
     from hermes_cli.auth import AuthError, resolve_provider
     from hermes_cli.models import provider_label
     from hermes_cli.setup_migration import _model_section_has_credentials
@@ -196,7 +196,7 @@ def _print_macos_fda_tip() -> None:
         return  # indeterminate — don't nag
     _info(None, "  macOS tip: silence ALL folder permission prompts with one switch —",
           "  System Settings → Privacy & Security → Full Disk Access → enable",
-          "  your terminal (and Hermes.app if you use Desktop), or run:",
+          "  your terminal (and Nexus.app if you use Desktop), or run:",
           "    open \"x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles\"",
           "  The grant is permanent — it survives every Hermes update.")
 
@@ -282,7 +282,7 @@ def _run_blank_slate_setup(config: dict, hermes_home, is_existing: bool):
           "Everything else (web, browser, code exec, memory,",
           "delegation, cron, plugins, MCP, …) starts disabled. The",
           "essential `hermes-agent` skill is always kept so the agent",
-          "can help you drive and configure Hermes itself.", None)
+          "can help you drive and configure Nexus itself.", None)
 
     # Step 1: Provider & Model (REQUIRED — the agent cannot run without it)
     print_header("Step 1 — Provider & Model (required)")
@@ -422,7 +422,7 @@ def _run_quick_setup(config: dict, hermes_home):
             _prompt_api_key(missing_tools[idx])
     if missing_messaging:  # checklist, then prompt for each selected platform's vars
         print_header("Messaging Platforms", gap=True)
-        _info("Connect Hermes to messaging apps to chat from anywhere.",
+        _info("Connect Nexus to messaging apps to chat from anywhere.",
               "You can configure these later with 'hermes setup gateway'.")
         # Group by platform in first-seen order; vars matching no platform are dropped.
         grouped: dict[str, list] = {}

@@ -288,7 +288,7 @@ async def console_ws(ws: WebSocket) -> None:
             if command_id == command_generation:
                 pending_confirmation = None
                 await out.error_then_complete(
-                    "Command timed out. Hermes Console returned to the prompt.", line, command_id, "timeout",
+                    "Command timed out. Nexus Console returned to the prompt.", line, command_id, "timeout",
                 )
         except Exception as exc:
             if command_id == command_generation:

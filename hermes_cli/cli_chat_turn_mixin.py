@@ -261,7 +261,7 @@ class CLIChatTurnMixin:
                     _cprint(answer_label())
                 if not turn.box_opened:
                     turn.box_opened = True
-                    label = " ☤ Hermes "
+                    label = " ☤ Nexus "
                     if self.show_timestamps:
                         label = f"{label}{datetime.now().strftime(self.timestamp_format)} "
                     w = self._scrollback_box_width(getattr(self.console, "width", 80))
@@ -720,11 +720,11 @@ class CLIChatTurnMixin:
             try:
                 from hermes_cli.skin_engine import get_active_skin
                 _skin = get_active_skin()
-                label = _skin.get_branding("response_label", "☤ Hermes")
+                label = _skin.get_branding("response_label", "☤ Nexus")
                 _resp_color = _maybe_remap_for_light_mode(_skin.get_color("response_border", "#CD7F32"))
                 _resp_text = _maybe_remap_for_light_mode(_skin.get_color("banner_text", "#FFF8DC"))
             except Exception:
-                label = "☤ Hermes"
+                label = "☤ Nexus"
                 _resp_color = _maybe_remap_for_light_mode("#CD7F32")
                 _resp_text = _maybe_remap_for_light_mode("#FFF8DC")
 
@@ -740,7 +740,7 @@ class CLIChatTurnMixin:
                 (self._stream_started and self._stream_box_opened) or _interrupted_streamed
             ) and not is_error_response
             modern = getattr(self, "_modern_layout", False)
-            # A gateway refusal is Hermes's own copy (quoted user text, a /discard line to copy):
+            # A gateway refusal is Nexus's own copy (quoted user text, a /discard line to copy):
             # markdown stripping or rendering would rewrite the quote and merge the lines.
             mode = ("raw" if turn.result and turn.result.get("failure_reason") == "gateway_connection"
                     else self.final_response_markdown)
@@ -775,7 +775,7 @@ class CLIChatTurnMixin:
             # stays visible instead of scrolling away inside the response prose.
             _limit = (turn.result or {}).get("usage_limit") if turn.result else None
             if isinstance(_limit, dict):
-                # Usage-window plan: what to do next, in commands that always work here. Hermes never
+                # Usage-window plan: what to do next, in commands that always work here. Nexus never
                 # switches on its own; the user picks.
                 try:
                     from agent.plan_limits import limit_next_steps_from_payload

@@ -463,7 +463,7 @@ def _(rid, params: dict) -> dict:
                         "source": src, "error": error, **scoped}
             if (not provider_configured and provider == "bedrock"
                     and source in {"iam-role", "aws-sdk-default-chain"}):
-                return fail("No Hermes provider is configured.", source)
+                return fail("No Nexus provider is configured.", source)
             if not runtime_has_credentials(runtime):
                 return fail(f"No usable credentials found for {blamed}.{missing_credentials_suffix(blamed)}",
                             runtime.get("source"))

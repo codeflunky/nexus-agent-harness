@@ -204,7 +204,7 @@ def stop_for_relaunch(*, incomplete: bool = False) -> NoReturn:
         if record is not None:
             record("old_version_handoff")
         print(
-            "You're updating from an older version of Hermes Agent. "
+            "You're updating from an older version of Nexus Agent. "
             "To complete this update, run `hermes update` again.",
             file=sys.stderr,
         )

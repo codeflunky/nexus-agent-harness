@@ -655,7 +655,7 @@ TOOL_SCHEMA_TOKEN_BUCKETS = frozenset({
 # Toolsets Hermes ships; MCP servers and plugin toolsets collapse to custom.
 TOOLSET_NAMES = BUILTIN_TOOLSET_NAMES | RETIRED_TOOLSET_NAMES | {"custom"}
 # compression is the expected cause; the rest are Hermes invalidating a warm prefix (bugs or
-# user-driven), or the provider reporting a cold read Hermes did not cause.
+# user-driven), or the provider reporting a cold read Nexus did not cause.
 CACHE_BREAK_CAUSES = frozenset({
     "cache_expired", "compression", "model_switch", "provider_reported_miss", "system_prompt_rebuild",
     "toolset_change",
