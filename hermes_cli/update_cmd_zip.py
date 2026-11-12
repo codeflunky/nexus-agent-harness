@@ -644,7 +644,17 @@ def _update_via_zip(args, *, had_desktop_app_before_update: bool = False,
     if target_sha is not None and not re.fullmatch(r"[0-9a-f]{40}", target_sha):
         raise ValueError("ZIP update requires an exact full commit SHA")
     ref = target_sha if target_sha is not None else f"refs/heads/{branch}"
-    repository = target_repository or "NousResearch/hermes-agent"
+    if not target_repository:
+        from hermes_cli.fork_policy import PRODUCT_REPOSITORY
+        from hermes_cli.source_releases import source_repository
+        from hermes_cli.update_cmd import _base_git_cmd, _m
+        # Prefer this checkout's origin (Nexus fork); fall back to product id, never silent Nous ZIP.
+        try:
+            target_repository = source_repository(_base_git_cmd(), _m().PROJECT_ROOT)
+        except Exception:
+            target_repository = PRODUCT_REPOSITORY
+        target_repository = target_repository or PRODUCT_REPOSITORY
+    repository = target_repository
     if (not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository)
             or any(part in (".", "..") for part in repository.split("/"))):
         raise ValueError("ZIP update requires a GitHub owner/repository")

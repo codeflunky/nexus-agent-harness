@@ -29,7 +29,9 @@ _ORPHAN_RESCUE_REF_MAX_AGE_DAYS = 30
 _GIT_TEXT_KW = dict(capture_output=True, text=True, encoding="utf-8", errors="replace",
                    creationflags=windows_hide_flags())
 _BAR = "=" * 68
-_UPSTREAM_ADD_CMD = "git remote add upstream https://github.com/NousResearch/hermes-agent.git"
+from hermes_cli.fork_policy import UPSTREAM_CLONE_URL
+
+_UPSTREAM_ADD_CMD = f"git remote add upstream {UPSTREAM_CLONE_URL}"
 
 
 def _git_ok(git_cmd, args, cwd, **kw) -> bool:
@@ -340,22 +342,26 @@ def _offer_upstream_remote(git_cmd: list[str], cwd: Path, *, assume_yes: bool, i
 
     ``--yes`` means "don't block", not "mutate my remotes", so a non-interactive skip is NOT persisted."""
     from hermes_cli.update_cmd import _add_upstream_remote, _mark_skip_upstream_prompt
+    from hermes_cli.fork_policy import PRODUCT_NAME, PROTECTED_FORK_PATHS, UPSTREAM_CLONE_URL
     print(
-        "\nℹ Your fork is not tracking the official Hermes repository.\n"
-        "  This means you may miss updates from NousResearch/hermes-agent.\n"
+        f"\nℹ {PRODUCT_NAME} updates from origin by default.\n"
+        f"  --sync-upstream merges {UPSTREAM_CLONE_URL} and can conflict with\n"
+        f"  fork patches ({', '.join(PROTECTED_FORK_PATHS[:4])}, …).\n"
+        "  Prefer a dedicated sync branch (docs/UPSTREAM.md) for routine merges.\n"
     )
     if assume_yes or (input_fn is None and not (sys.stdin.isatty() and sys.stdout.isatty())):
         print(f"  Skipping upstream setup (non-interactive run).\n  Add it later with: {_UPSTREAM_ADD_CMD}")
         return False
     if input_fn is not None:
-        response = input_fn("Add official repo as 'upstream' remote? [y/N]", "n").strip().lower()
+        response = input_fn("Add official Hermes repo as 'upstream' remote? [y/N]", "n").strip().lower()
     else:
         try:
-            response = input("Add official repo as 'upstream' remote? [Y/n]: ").strip().lower()
+            response = input("Add official Hermes repo as 'upstream' remote? [y/N]: ").strip().lower()
         except (EOFError, KeyboardInterrupt, UnicodeDecodeError):
             print()
             response = "n"
-    if response not in {"", "y", "yes"}:
+    # Default is N — require an explicit yes (empty = no).
+    if response not in {"y", "yes"}:
         print(f"  Skipped. Run '{_UPSTREAM_ADD_CMD}' to add later.")
         _mark_skip_upstream_prompt()
         return False
@@ -363,7 +369,7 @@ def _offer_upstream_remote(git_cmd: list[str], cwd: Path, *, assume_yes: bool, i
     if not _add_upstream_remote(git_cmd, cwd):
         print("  ✗ Failed to add upstream remote. Skipping upstream sync.")
         return False
-    print("  ✓ Added upstream: https://github.com/NousResearch/hermes-agent.git")
+    print(f"  ✓ Added upstream: {UPSTREAM_CLONE_URL}")
     return True
 
 

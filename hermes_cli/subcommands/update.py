@@ -112,4 +112,11 @@ def build_update_parser(subparsers, *, cmd_update: Callable) -> None:
         help="Update code and dependencies but defer the fleet restart. Use for updates "
              "running inside a gateway cgroup, then restart gateways separately.",
     )
+    update_parser.add_argument(
+        "--sync-upstream", action="store_true", default=False,
+        help="Opt-in: after updating from origin, also merge NousResearch/hermes-agent "
+             "(upstream/main) into this fork. Default is origin-only so Nexus branding "
+             "and other fork patches are not overwritten. Prefer a dedicated sync branch "
+             "(see docs/UPSTREAM.md) for routine upstream merges.",
+    )
     update_parser.set_defaults(func=cmd_update)

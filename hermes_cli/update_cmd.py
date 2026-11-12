@@ -1349,10 +1349,14 @@ def _apply_parked_branch_guard(
 
 def _prepare_checkout_for_update(
     git_cmd, branch, current_branch, *, is_fork, assume_yes, gateway_mode, gw_input_fn,
-    switch_branch, target_ref=None, _windows_gateway_resume):
+    switch_branch, target_ref=None, _windows_gateway_resume, sync_upstream: bool = False):
     """Parked-branch guard, land on the target, stash, count new commits. Exits when the
     checkout is unsafe to move or the target is missing. ``commit_count`` is 0 when up to
-    date, -1 when tips differ but the shallow count is unrecoverable."""
+    date, -1 when tips differ but the shallow count is unrecoverable.
+
+    ``sync_upstream`` is opt-in (``hermes update --sync-upstream``). Default updates stay
+    origin-only so Nexus fork patches are not overwritten by NousResearch/hermes-agent.
+    """
     if target_ref is None:
         target_ref = f"origin/{branch}"
     release_tag = target_ref != f"origin/{branch}"
@@ -1440,7 +1444,8 @@ def _prepare_checkout_for_update(
     # "Already up to date!" and verified nothing). Non-fork checkouts have no upstream question: origin IS
     # the official repo, so "Already up to date!" is fully verified there.
     upstream_checked = True
-    if commit_count == 0 and is_fork and branch == "main" and not release_tag:
+    # Opt-in only: default Nexus updates are origin-only (see hermes_cli.fork_policy).
+    if commit_count == 0 and sync_upstream:
         pre_sync_sha = _capture_head_sha(git_cmd, _m().PROJECT_ROOT)
         try:
             upstream_checked = _m()._sync_with_upstream_if_needed(
@@ -1482,6 +1487,7 @@ class _UpdateOptions:
     switch_branch: bool
     discard_local_changes: bool
     no_gateway_restart: bool = False
+    sync_upstream: bool = False
 
 
 def _resolve_update_options(args, gateway_mode: bool) -> _UpdateOptions:
@@ -1503,6 +1509,8 @@ def _resolve_update_options(args, gateway_mode: bool) -> _UpdateOptions:
     # and dependencies but defer the fleet restart so the updater is not killed
     # by its own restart. The pending-restart marker is kept for catch-up.
     no_gateway_restart = bool(getattr(args, "no_gateway_restart", False))
+    # Nexus fork policy: never auto-merge NousResearch/hermes-agent; require --sync-upstream.
+    sync_upstream = bool(getattr(args, "sync_upstream", False))
 
     # Interactive terminals always stash-and-ask; only non-interactive updates consult
     # updates.non_interactive_local_changes (auto-restore vs discard).
@@ -1516,7 +1524,7 @@ def _resolve_update_options(args, gateway_mode: bool) -> _UpdateOptions:
         pre_update_version=pre_update_version,
         gw_input_fn=gw_input_fn, assume_yes=assume_yes, keep_stash=keep_stash,
         switch_branch=switch_branch, discard_local_changes=discard_local_changes,
-        no_gateway_restart=no_gateway_restart)
+        no_gateway_restart=no_gateway_restart, sync_upstream=sync_upstream)
 
 
 def _begin_update_receipt_and_plan(args):
@@ -1566,8 +1574,9 @@ def _prepare_git_command(*, checkout_move=None) -> tuple[bool, list, bool]:
     git_dir = _m().PROJECT_ROOT / ".git"
     use_zip_update = not git_dir.exists()
     if use_zip_update and sys.platform != "win32":
-        print("✗ Not a git repository. Please reinstall:")
-        print("  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash")
+        from hermes_cli.fork_policy import PRODUCT_CLONE_URL, PRODUCT_NAME
+        print(f"✗ Not a git repository. Please reinstall {PRODUCT_NAME} from source:")
+        print(f"  git clone {PRODUCT_CLONE_URL}")
         _record_stop("not_git_checkout")
         sys.exit(1)
 
@@ -1595,8 +1604,11 @@ def _prepare_git_command(*, checkout_move=None) -> tuple[bool, list, bool]:
     is_fork = _is_fork(origin_url)
 
     if is_fork:
-        print("⚠ Updating from fork:")
+        from hermes_cli.fork_policy import PRODUCT_NAME
+        print(f"→ Updating {PRODUCT_NAME} from origin (product remote):")
         print(f"  {origin_url}")
+        print("  Tip: Hermes upstream merge is opt-in — `hermes update --sync-upstream`")
+        print("       (prefer a sync branch; see docs/UPSTREAM.md).")
         print()
     return use_zip_update, git_cmd, is_fork
 
@@ -1910,10 +1922,15 @@ def _cmd_update_impl(args, gateway_mode: bool):
                 target_ref = held
                 held_message = f"✓ Holding at this build until a newer {channel} release ships."
         _refuse_before_commit_point(git_cmd, target_ref, _windows_gateway_resume)
+        from hermes_cli.fork_policy import wants_upstream_sync
+        sync_upstream = wants_upstream_sync(
+            is_fork=is_fork, branch=branch, release_sha=release_sha,
+            sync_upstream_flag=opts.sync_upstream)
         _plan = _prepare_checkout_for_update(
             git_cmd, branch, current_branch, is_fork=is_fork, assume_yes=assume_yes,
             gateway_mode=gateway_mode, gw_input_fn=gw_input_fn, switch_branch=opts.switch_branch,
-            target_ref=target_ref, _windows_gateway_resume=_windows_gateway_resume)
+            target_ref=target_ref, _windows_gateway_resume=_windows_gateway_resume,
+            sync_upstream=sync_upstream)
         commit_count = _plan.commit_count
 
         if commit_count == 0:
@@ -1939,7 +1956,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
             gw_input_fn=gw_input_fn, discard_local_changes=opts.discard_local_changes,
             keep_stash=opts.keep_stash, target_ref=target_ref, pre_sync_sha=_plan.pre_sync_sha,
             rollback_branch=_plan.rollback_branch,
-            sync_upstream=is_fork and branch == "main" and not release_sha, assume_yes=assume_yes,
+            sync_upstream=sync_upstream, assume_yes=assume_yes,
             in_place_update=_plan.in_place_update, _windows_gateway_resume=_windows_gateway_resume,
             expected_sha=completion_request.get("expected_sha"))
         _apply_pulled_update(
