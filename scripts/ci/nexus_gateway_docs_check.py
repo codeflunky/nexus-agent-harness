@@ -24,6 +24,10 @@ def main() -> int:
         "DISCORD_BOT_TOKEN",
         "SLACK_BOT_TOKEN",
         "SLACK_APP_TOKEN",
+        "TEAMS_CLIENT_ID",
+        "TEAMS_CLIENT_SECRET",
+        "TEAMS_TENANT_ID",
+        "Microsoft Teams",
     ):
         if marker not in gateway:
             raise SystemExit(f"docs/GATEWAY.md missing marker: {marker}")

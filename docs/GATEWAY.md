@@ -1,6 +1,6 @@
 # Gateway recipes (Nexus, Linux)
 
-Optional: talk to Nexus from **Telegram**, **Discord**, or **Slack**.  
+Optional: talk to Nexus from **Telegram**, **Discord**, **Slack**, or **Microsoft Teams**.  
 CLI/TUI works without any of this — see [GETTING_STARTED.md](GETTING_STARTED.md).
 
 Deep platform guides (upstream): [website/docs/user-guide/messaging/](../website/docs/user-guide/messaging/index.md).
@@ -9,14 +9,14 @@ Deep platform guides (upstream): [website/docs/user-guide/messaging/](../website
 
 1. Provider configured (`hermes setup` / `.env` API key).
 2. Secrets only in `$HERMES_HOME/.env` with mode `600` ([SECURE_DEFAULTS.md](SECURE_DEFAULTS.md)).
-3. Prefer `approvals.mode: manual` and narrow allowlists (`TELEGRAM_ALLOWED_USERS`, etc.).
-4. If doctor warns about missing messaging SDKs, install the extras for your stack (e.g. project `[messaging]` / platform extras).
+3. Prefer `approvals.mode: manual` and narrow allowlists (`TELEGRAM_ALLOWED_USERS`, `TEAMS_ALLOWED_USERS`, etc.).
+4. If doctor warns about missing messaging SDKs, install the extras for your stack (e.g. project `[messaging]` / `teams` extras).
 
 ## Quick path (any platform)
 
 ```bash
 source ./activate
-hermes gateway setup      # pick Telegram / Discord / Slack; writes ~/.hermes/.env
+hermes gateway setup      # pick Telegram / Discord / Slack / Microsoft Teams
 hermes gateway            # foreground (dev)
 # or persist:
 hermes gateway install
@@ -84,6 +84,46 @@ Or use `hermes gateway setup` and select Slack.
 
 Details: [slack.md](../website/docs/user-guide/messaging/slack.md).
 
+## Microsoft Teams
+
+Teams uses a **public HTTPS webhook** (unlike Slack Socket Mode). Locally you need a tunnel; in production, a real domain.
+
+1. Install the Teams extra (source checkout):
+
+```bash
+python -c "import pm; pm.sync_venv(['teams'], explicit=True)"
+```
+
+2. Expose the webhook port (default `3978`) with a public HTTPS URL:
+
+```bash
+# examples
+devtunnel host …          # or: ngrok http 3978  /  cloudflared tunnel --url http://localhost:3978
+```
+
+3. Register the bot (Teams CLI or Azure portal) with endpoint `https://<public-host>/api/messages`.
+
+4. Configure `~/.hermes/.env`:
+
+```bash
+# Wizard
+hermes gateway setup      # select Microsoft Teams
+
+# Or manual
+TEAMS_CLIENT_ID=...
+TEAMS_CLIENT_SECRET=...
+TEAMS_TENANT_ID=...       # or "common" for multi-tenant
+TEAMS_ALLOWED_USERS=...   # AAD object IDs (from `teams status --verbose`)
+# optional: TEAMS_PORT=3978
+# optional: TEAMS_HOME_CHANNEL=...
+```
+
+5. Run: `hermes gateway` (tunnel must stay up for local/dev).
+
+Meeting-summary pipeline (Graph subscriptions) is separate: [teams-meetings.md](../website/docs/user-guide/messaging/teams-meetings.md).
+
+Details: [teams.md](../website/docs/user-guide/messaging/teams.md).
+
 ## Persist on Linux
 
 | Scope | Commands |
@@ -95,7 +135,7 @@ Useful: `hermes gateway status` / `stop` / `restart` / `uninstall`.
 
 ## Doctor / smoke
 
-Missing bot tokens and optional messaging packages are **warnings**, not CI blockers.  
+Missing bot tokens / Teams credentials and optional messaging packages are **warnings**, not CI blockers.  
 [DOCTOR.md](DOCTOR.md) / `just nexus-smoke` stay green without gateway credentials.
 
 ## Other platforms (one-liners)

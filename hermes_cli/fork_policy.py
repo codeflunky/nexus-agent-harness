@@ -61,7 +61,14 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ),
     (
         "docs/GATEWAY.md",
-        ("hermes gateway setup", "TELEGRAM_BOT_TOKEN", "DISCORD_BOT_TOKEN", "SLACK_BOT_TOKEN"),
+        (
+            "hermes gateway setup",
+            "TELEGRAM_BOT_TOKEN",
+            "DISCORD_BOT_TOKEN",
+            "SLACK_BOT_TOKEN",
+            "TEAMS_CLIENT_ID",
+            "Microsoft Teams",
+        ),
     ),
     (
         "hermes_cli/config_defaults.py",

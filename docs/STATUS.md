@@ -44,7 +44,7 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 ### M3 — Product surfaces (still terminal-first)
 
 - [x] Reliable first-run path: setup → model → chat/TUI — [docs/GETTING_STARTED.md](GETTING_STARTED.md); gate smoke `scripts/ci/nexus_first_run_check.py` (no live API keys)
-- [x] Optional gateway recipes — [docs/GATEWAY.md](GATEWAY.md) (Telegram / Discord / Slack); `just nexus-gateway-docs`
+- [x] Optional gateway recipes — [docs/GATEWAY.md](GATEWAY.md) (Telegram / Discord / Slack / Microsoft Teams); `just nexus-gateway-docs`
 - [ ] Eval / smoke scripts for regressions beyond first-run / doctor
 
 ### M4 — Desktop Win/Mac (later)

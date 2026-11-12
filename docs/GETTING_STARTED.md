@@ -91,7 +91,7 @@ Probe: `hermes_cli.main._has_any_provider_configured()`.
 ## Related
 
 - [docs/SECURE_DEFAULTS.md](SECURE_DEFAULTS.md) — approvals, secrets, egress  
-- [docs/GATEWAY.md](GATEWAY.md) — Telegram / Discord / Slack recipes  
+- [docs/GATEWAY.md](GATEWAY.md) — Telegram / Discord / Slack / Microsoft Teams recipes  
 - [docs/DOCTOR.md](DOCTOR.md) — expected doctor warnings  
 - [docs/STATUS.md](STATUS.md) — milestones  
 - [docs/UPSTREAM.md](UPSTREAM.md) — origin-only updates / Hermes sync cadence  

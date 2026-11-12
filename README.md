@@ -81,7 +81,7 @@ hermes doctor       # diagnose the install
 
 **Secure defaults (approvals / secrets / egress):** [docs/SECURE_DEFAULTS.md](docs/SECURE_DEFAULTS.md).
 
-**Gateway (Telegram / Discord / Slack):** [docs/GATEWAY.md](docs/GATEWAY.md).
+**Gateway (Telegram / Discord / Slack / Microsoft Teams):** [docs/GATEWAY.md](docs/GATEWAY.md).
 
 Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
 
