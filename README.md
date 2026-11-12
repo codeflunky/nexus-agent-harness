@@ -36,7 +36,7 @@
 |---|---|
 | **Terminal-first** | Classic CLI plus Ink TUI — multiline chat, slash commands, streaming tools. |
 | **Same agent core** | Sessions, skills, memory, and providers from upstream Hermes. |
-| **Fork, not a second repo** | All work lives in this GitHub repository; upstream is tracked as a git remote. |
+| **Private dev + public install** | Day-to-day work is in [`nexus-agent-harness-dev`](https://github.com/codeflunky/nexus-agent-harness-dev); one-liners clone the public [`nexus-agent-harness`](https://github.com/codeflunky/nexus-agent-harness) mirror. |
 | **Desktop later** | Windows/macOS desktop packaging is a later milestone, not the current focus. |
 
 ## How it works
@@ -48,7 +48,7 @@
 
 ## Get started
 
-**Linux (from this repo):**
+**Linux (public install clone):**
 
 ```bash
 git clone https://github.com/codeflunky/nexus-agent-harness
@@ -58,6 +58,8 @@ source ./activate          # each new shell
 hermes --version
 hermes doctor
 ```
+
+Contributors: clone [`nexus-agent-harness-dev`](https://github.com/codeflunky/nexus-agent-harness-dev) (private) instead. Publishing the public mirror: [docs/PUBLISH.md](docs/PUBLISH.md).
 
 **TUI (interactive terminal):**
 
@@ -87,11 +89,11 @@ hermes doctor       # diagnose the install
 
 **Providers (Bedrock / Mantle / GovCloud):** [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
-**Windows (WSL2 or native PowerShell):** [docs/WINDOWS.md](docs/WINDOWS.md) — use `HERMES_REPO_URL` so the installer clones this fork (not the Hermes CDN).
+**Windows (WSL2 or native PowerShell):** [docs/WINDOWS.md](docs/WINDOWS.md) — public one-liner via `HERMES_REPO_URL` → `codeflunky/nexus-agent-harness`.
 
 Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
 
-Upstream CDN one-liners and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). For Nexus, prefer source / `HERMES_REPO_URL` installers in [docs/WINDOWS.md](docs/WINDOWS.md).
+Upstream CDN one-liners and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). For Nexus, use the public mirror installers in [docs/WINDOWS.md](docs/WINDOWS.md).
 
 ## Status
 
@@ -104,7 +106,7 @@ Upstream CDN one-liners and Desktop packages still belong to [NousResearch/herme
 
 ## Upstream
 
-This repository **is** the fork. Do not invent a second remote product repo.
+Private **`-dev`** is the working fork; public **`nexus-agent-harness`** is the install mirror ([docs/PUBLISH.md](docs/PUBLISH.md)). Hermes stays a git remote only:
 
 ```bash
 git remote add upstream https://github.com/NousResearch/hermes-agent.git   # once

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from hermes_cli.fork_policy import (
+    DEV_REPOSITORY,
     PRODUCT_REPOSITORY,
     PROTECTED_FORK_CHECKS,
     PROTECTED_FORK_PATHS,
@@ -37,8 +38,10 @@ def test_wants_upstream_sync_skips_non_main_and_releases():
 
 def test_product_repository_and_protected_paths():
     assert PRODUCT_REPOSITORY == "codeflunky/nexus-agent-harness"
+    assert DEV_REPOSITORY == "codeflunky/nexus-agent-harness-dev"
     assert "hermes_cli/fork_policy.py" in PROTECTED_FORK_PATHS
     assert "LICENSE" in PROTECTED_FORK_PATHS
+    assert "docs/PUBLISH.md" in PROTECTED_FORK_PATHS
     assert PROTECTED_FORK_PATHS == tuple(path for path, _ in PROTECTED_FORK_CHECKS)
 
 

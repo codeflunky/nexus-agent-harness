@@ -1,22 +1,34 @@
 # Upstream tracking
 
-**Single repo:** all fork work stays in [codeflunky/nexus-agent-harness](https://github.com/codeflunky/nexus-agent-harness). Upstream is a git remote, not a second product repository.
+**Two GitHub repos:**
+
+| Repo | Visibility | Purpose |
+|------|------------|---------|
+| [`codeflunky/nexus-agent-harness-dev`](https://github.com/codeflunky/nexus-agent-harness-dev) | Private | Day-to-day fork work, PRs, CI |
+| [`codeflunky/nexus-agent-harness`](https://github.com/codeflunky/nexus-agent-harness) | Public | Install / release mirror for one-liners |
+
+Upstream Hermes is a git remote only — not a second product. How to publish the
+public mirror: [PUBLISH.md](PUBLISH.md).
 
 ## Update policy (Nexus)
 
 | Command | What it does |
 |---------|----------------|
-| `hermes update` | Updates from **origin** only (this product repo). Does **not** merge NousResearch/hermes-agent. |
+| `hermes update` | Updates from **origin** only (this product checkout). Does **not** merge NousResearch/hermes-agent. |
 | `hermes update --sync-upstream` | After origin update, may merge `upstream/main` (Hermes). Opt-in; can overwrite fork patches. |
 
-ZIP fallback (when git update cannot run) downloads from **this checkout’s origin** GitHub repo, not from NousResearch by default.
+ZIP fallback (when git update cannot run) downloads from
+**`codeflunky/nexus-agent-harness`** (public), via `PRODUCT_REPOSITORY` in
+[`hermes_cli/fork_policy.py`](../hermes_cli/fork_policy.py).
 
-Policy code: [`hermes_cli/fork_policy.py`](../hermes_cli/fork_policy.py).
-
-## Remote
+## Remotes (developer checkout)
 
 ```bash
+# origin → private -dev (default after rename)
+git remote -v
+
 git remote add upstream https://github.com/NousResearch/hermes-agent.git
+git remote add public https://github.com/codeflunky/nexus-agent-harness.git
 git fetch upstream
 ```
 
@@ -51,7 +63,7 @@ Listed paths include:
 |------|--------|
 | `LICENSE`, `NOTICE` | Ours (MIT + required notices) |
 | `README.md` | Ours (Craft Anything–style fork homepage) |
-| `docs/STATUS.md`, `docs/UPSTREAM.md`, `docs/SECURE_DEFAULTS.md`, `docs/GATEWAY.md`, `docs/PROVIDERS.md`, `docs/WINDOWS.md` | Ours |
+| `docs/STATUS.md`, `docs/UPSTREAM.md`, `docs/SECURE_DEFAULTS.md`, `docs/GATEWAY.md`, `docs/PROVIDERS.md`, `docs/WINDOWS.md`, `docs/PUBLISH.md` | Ours |
 | `hermes_cli/config_defaults.py` (`approvals.mode: manual`) | Ours |
 | `hermes_cli/fork_policy.py` | Ours |
 | Nexus branding surfaces (`banner.py`, `skin_engine.py`, TUI theme/i18n, `assets/nexus-banner.png`) | Ours |

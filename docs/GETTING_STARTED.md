@@ -4,11 +4,12 @@ End-to-end path: **toolchain → setup → model → chat / TUI**.
 
 This fork is developed from source in this repo. Upstream CDN installers are optional; prefer the steps below.
 
-**Windows (WSL2 or native PowerShell):** see [WINDOWS.md](WINDOWS.md) — use `HERMES_REPO_URL` so installers clone this fork.
+**Windows (WSL2 or native PowerShell):** see [WINDOWS.md](WINDOWS.md) — public one-liner (no GitHub login).
 
 ## 1. Provision the checkout
 
 ```bash
+# Public install mirror (default). Contributors: use nexus-agent-harness-dev.
 git clone https://github.com/codeflunky/nexus-agent-harness
 cd nexus-agent-harness
 bash setup-hermes.sh --runtime-only --test-environment

@@ -57,6 +57,8 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 ### M4 — Desktop Win/Mac (later)
 
 - [x] Document Windows CLI install (WSL2 + native PowerShell via `HERMES_REPO_URL`) — [docs/WINDOWS.md](WINDOWS.md)
+- [x] Split private `-dev` vs public install mirror — [docs/PUBLISH.md](PUBLISH.md)
+- [ ] Seed / keep public `codeflunky/nexus-agent-harness` `main` in sync with `-dev`
 - [ ] Revisit `apps/desktop` packaging after CLI/TUI is solid
 - [ ] Windows and macOS installers / signed builds as a separate track
 - [ ] Do not block Linux terminal work on Desktop

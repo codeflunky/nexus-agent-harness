@@ -1,8 +1,10 @@
 """Nexus fork update / sync policy.
 
-This checkout's product remote is ``origin`` (codeflunky/nexus-agent-harness).
-``hermes update`` refreshes from that remote. Merging NousResearch/hermes-agent
-is opt-in only (``hermes update --sync-upstream``), so an update cannot silently
+Developer checkouts use ``origin`` → ``codeflunky/nexus-agent-harness-dev``
+(private). End-user install / ZIP fallback use ``PRODUCT_REPOSITORY`` →
+``codeflunky/nexus-agent-harness`` (public mirror). ``hermes update`` refreshes
+from the checkout's ``origin``. Merging NousResearch/hermes-agent is opt-in
+only (``hermes update --sync-upstream``), so an update cannot silently
 overwrite Nexus branding and other fork patches.
 
 ``PROTECTED_FORK_CHECKS`` is the enforcement contract: CI
@@ -18,9 +20,11 @@ from typing import Iterable, Optional
 # Display name for user-facing update copy.
 PRODUCT_NAME = "Nexus Agent"
 
-# GitHub identity of this product repository (ZIP fallback / clone hints).
+# Public install / ZIP fallback (not the private -dev working tree).
 PRODUCT_REPOSITORY = "codeflunky/nexus-agent-harness"
 PRODUCT_CLONE_URL = f"https://github.com/{PRODUCT_REPOSITORY}.git"
+# Private day-to-day development repository.
+DEV_REPOSITORY = "codeflunky/nexus-agent-harness-dev"
 
 # Upstream Hermes (deliberate sync only).
 UPSTREAM_REPOSITORY = "NousResearch/hermes-agent"
@@ -37,6 +41,7 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
             "Nexus Agent",
             "assets/nexus-banner.png",
             "codeflunky/nexus-agent-harness",
+            "nexus-agent-harness-dev",
         ),
     ),
     ("docs/STATUS.md", ("Nexus", "Origin-only", "M1 complete", "M2 complete", "M3 complete")),
@@ -46,9 +51,14 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
             "PROTECTED_FORK",
             "Updates from **origin** only",
             "codeflunky/nexus-agent-harness",
+            "nexus-agent-harness-dev",
             "Sync cadence",
             "Monthly",
         ),
+    ),
+    (
+        "docs/PUBLISH.md",
+        ("nexus-agent-harness-dev", "public", "HERMES_REPO_URL"),
     ),
     ("docs/DOCTOR.md", ("hermes doctor", "expected warnings", "Nexus")),
     (

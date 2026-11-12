@@ -1,61 +1,41 @@
 # Windows install (Nexus)
 
-Nexus does **not** use the Hermes CDN one-liner
-(`hermes-agent.nousresearch.com`). Install from **this GitHub repo** so you get
-the fork (Nexus branding, GovCloud Bedrock, provider recipes), not upstream Hermes.
+Nexus does **not** use the Hermes CDN
+(`hermes-agent.nousresearch.com`). Install from the **public** GitHub repo
+[`codeflunky/nexus-agent-harness`](https://github.com/codeflunky/nexus-agent-harness)
+so `irm` / `curl` work without a GitHub login.
 
-**Recommendation for a first VM smoke:** **WSL2 (Ubuntu)** — same path as Linux
-milestones. Native PowerShell is fine for CLI/gateway smoke.
+| Repo | Role |
+|------|------|
+| [`nexus-agent-harness`](https://github.com/codeflunky/nexus-agent-harness) | **Public** install / release mirror |
+| [`nexus-agent-harness-dev`](https://github.com/codeflunky/nexus-agent-harness-dev) | **Private** day-to-day development |
 
-Deep upstream references (behavior/quirks):  
+**Azure VDI / no local admin:** use **native PowerShell** below — installs under
+`%LOCALAPPDATA%\hermes\` and User PATH only. WSL usually needs elevation.
+
+Deep upstream references:  
 [Windows WSL2](../website/docs/user-guide/windows-wsl-quickstart.md) ·
 [Windows native](../website/docs/user-guide/windows-native.md).
 
----
-
-## Option A — WSL2 (recommended)
-
-From **Admin PowerShell** (once):
-
-```powershell
-wsl --install
-# reboot if prompted; finish Ubuntu user setup
-```
-
-Inside **Ubuntu (WSL2)**:
-
-```bash
-# One-liner bootstrap (clones this fork, then PM setup)
-export HERMES_REPO_URL=https://github.com/codeflunky/nexus-agent-harness.git
-curl -fsSL https://raw.githubusercontent.com/codeflunky/nexus-agent-harness/main/scripts/install.sh | bash
-```
-
-Or clone + activate (dev-style, matches Linux docs):
-
-```bash
-git clone https://github.com/codeflunky/nexus-agent-harness
-cd nexus-agent-harness
-bash setup-hermes.sh --runtime-only --test-environment
-source ./activate
-hermes --version          # expect Nexus Agent
-hermes doctor
-```
-
-First-run / providers: [GETTING_STARTED.md](GETTING_STARTED.md), [PROVIDERS.md](PROVIDERS.md).
+If `irm` still 404s, the public mirror has not been seeded yet — see
+[PUBLISH.md](PUBLISH.md).
 
 ---
 
-## Option B — Native Windows (PowerShell)
-
-In **PowerShell** (Windows Terminal preferred):
+## Option B — Native Windows (PowerShell) — VDI / no admin
 
 ```powershell
-# Point the installer at the Nexus fork (default would be NousResearch/hermes-agent)
 $env:HERMES_REPO_URL = 'https://github.com/codeflunky/nexus-agent-harness.git'
 iex (irm https://raw.githubusercontent.com/codeflunky/nexus-agent-harness/main/scripts/install.ps1)
 ```
 
-Typical layout after install:
+Open a **new** terminal, then:
+
+```powershell
+hermes --version          # expect Nexus Agent
+hermes doctor
+hermes setup              # or provider recipes in PROVIDERS.md
+```
 
 | Path | Purpose |
 |------|---------|
@@ -63,22 +43,30 @@ Typical layout after install:
 | `%LOCALAPPDATA%\hermes\bin\` | `hermes` on PATH |
 | `%LOCALAPPDATA%\hermes\` | `HERMES_HOME` (`.env`, config, sessions) |
 
-Open a **new** terminal, then:
+### Contributor / private tip (optional)
+
+Working tree is private `-dev`. After `gh auth login`:
 
 ```powershell
-hermes --version
-hermes doctor
-hermes setup          # or hermes model / provider recipes
-```
-
-### Dev-style (clone + `setup-hermes.ps1`)
-
-```powershell
-git clone https://github.com/codeflunky/nexus-agent-harness
-cd nexus-agent-harness
+gh repo clone codeflunky/nexus-agent-harness-dev
+cd nexus-agent-harness-dev
 .\setup-hermes.ps1 -RuntimeOnly
 .\activate.ps1
-hermes --version
+```
+
+---
+
+## Option A — WSL2 (needs admin for `wsl --install`)
+
+```powershell
+wsl --install
+```
+
+Inside Ubuntu:
+
+```bash
+export HERMES_REPO_URL=https://github.com/codeflunky/nexus-agent-harness.git
+curl -fsSL https://raw.githubusercontent.com/codeflunky/nexus-agent-harness/main/scripts/install.sh | bash
 ```
 
 ---
@@ -86,11 +74,9 @@ hermes --version
 ## What *not* to run
 
 ```powershell
-# Upstream Hermes CDN — installs NousResearch/hermes-agent, not this fork
+# Upstream Hermes CDN — not this fork
 iex (irm https://hermes-agent.nousresearch.com/install.ps1)
 ```
-
-Unless you set `HERMES_REPO_URL` first, that path is **not** Nexus.
 
 ---
 
@@ -98,14 +84,13 @@ Unless you set `HERMES_REPO_URL` first, that path is **not** Nexus.
 
 1. `hermes --version` shows **Nexus Agent**  
 2. `hermes doctor` — setup gaps OK ([DOCTOR.md](DOCTOR.md))  
-3. Pick a provider ([PROVIDERS.md](PROVIDERS.md)): OpenRouter / OAuth / local / Bedrock  
+3. Pick a provider ([PROVIDERS.md](PROVIDERS.md))  
 4. Optional: `hermes gateway setup` ([GATEWAY.md](GATEWAY.md))  
-5. Desktop MSIX / signed Win installers remain **M4** — out of scope for this smoke  
+5. Desktop MSIX remains **M4**
 
 ---
 
 ## Related
 
-- [GETTING_STARTED.md](GETTING_STARTED.md) — Linux-oriented first-run (same CLI once activated)  
-- [STATUS.md](STATUS.md) — M4 Desktop later  
-- Upstream: [installation.md](../website/docs/getting-started/installation.md)  
+- [PUBLISH.md](PUBLISH.md) — seed / refresh the public mirror  
+- [GETTING_STARTED.md](GETTING_STARTED.md) · [STATUS.md](STATUS.md)  
