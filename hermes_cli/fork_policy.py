@@ -39,11 +39,12 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
             "codeflunky/nexus-agent-harness",
         ),
     ),
-    ("docs/STATUS.md", ("Nexus", "Origin-only")),
+    ("docs/STATUS.md", ("Nexus", "Origin-only", "M1 complete")),
     (
         "docs/UPSTREAM.md",
         ("PROTECTED_FORK", "Updates from **origin** only", "codeflunky/nexus-agent-harness"),
     ),
+    ("docs/DOCTOR.md", ("hermes doctor", "expected warnings", "Nexus")),
     (
         "hermes_cli/fork_policy.py",
         ("PROTECTED_FORK_CHECKS", "PRODUCT_REPOSITORY", "wants_upstream_sync"),

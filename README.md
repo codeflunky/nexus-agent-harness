@@ -19,6 +19,7 @@
 [How it works](#how-it-works) ·
 [Status](#status) ·
 [Get started](#get-started) ·
+[Doctor](docs/DOCTOR.md) ·
 [Upstream](#upstream) ·
 [License](#license-and-credits)
 
@@ -73,16 +74,18 @@ hermes setup        # wizard
 hermes doctor       # diagnose the install
 ```
 
+Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
+
 Upstream one-liner installs and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); this fork is meant to be developed and run from source.
 
 ## Status
 
 > [!IMPORTANT]
-> **Status:** early fork bootstrap. What works today, what is partial, and what's next:
+> **Status:** M1 (CLI/TUI Linux baseline) complete. What works today, what is partial, and what's next:
 >
-> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT root license + [NOTICE](NOTICE); PM setup; `hermes` CLI (`--version`, `--help`, `doctor`); `ui-tui` build (`ui-tui/dist/entry.js`); TTY-gated `hermes --tui`.
-> - **Partly there:** full interactive chat needs API keys via `hermes setup`; gateway/messaging channels unconfigured by default; Desktop app not a current deliverable.
-> - **Next:** see [docs/STATUS.md](docs/STATUS.md) — harness hardening, CI for CLI/TUI on Linux, upstream sync cadence, then Desktop Win/Mac.
+> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [Nexus smoke CI](.github/workflows/nexus-smoke.yml); protected fork markers.
+> - **Partly there:** interactive chat needs `hermes setup` / API keys; gateway channels off by default; Desktop later.
+> - **Next:** first-run path (setup → model → chat/TUI), harness defaults, upstream sync cadence — [docs/STATUS.md](docs/STATUS.md).
 
 ## Upstream
 
