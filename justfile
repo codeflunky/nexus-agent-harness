@@ -76,6 +76,11 @@ check-nexus-fork:
 nexus-smoke *args:
     scripts/hermes-python scripts/ci/nexus_smoke.py {{args}}
 
+# First-run gate: unconfigured chat refuses, non-interactive setup guidance, provider probe
+[group('check')]
+nexus-first-run:
+    scripts/hermes-python scripts/ci/nexus_first_run_check.py
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:

@@ -92,12 +92,16 @@ def print_noninteractive_setup_guidance(reason: str | None = None) -> None:
     if reason:
         print_info(reason)
     _info("The interactive wizard cannot be used here.", None,
-          "Configure Nexus using environment variables or config commands:",
+          "Configure Nexus using $HERMES_HOME/.env and config commands:",
+          "  printf 'OPENROUTER_API_KEY=sk-or-...\\n' >> \"${HERMES_HOME:-$HOME/.hermes}/.env\"",
+          "  hermes config set model.provider openrouter",
+          "  hermes config set model.default openrouter/auto", None,
+          "Local OpenAI-compatible:",
           "  hermes config set model.provider custom",
           "  hermes config set model.base_url http://localhost:8080/v1",
           "  hermes config set model.default your-model-name", None,
-          "Or set OPENROUTER_API_KEY (OpenRouter) / OPENAI_API_KEY (OpenAI) in your environment.",
-          "Run 'hermes setup' in an interactive terminal to use the full wizard.", None)
+          "Or set OPENROUTER_API_KEY / OPENAI_API_KEY in the environment.",
+          "Full path: docs/GETTING_STARTED.md — or run 'hermes setup' on a TTY.", None)
 
 
 def _sanitize_pasted_input(value: str) -> str:

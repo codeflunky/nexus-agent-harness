@@ -46,6 +46,10 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ),
     ("docs/DOCTOR.md", ("hermes doctor", "expected warnings", "Nexus")),
     (
+        "docs/GETTING_STARTED.md",
+        ("setup → model → chat", "hermes setup", "Nexus isn't configured yet"),
+    ),
+    (
         "hermes_cli/fork_policy.py",
         ("PROTECTED_FORK_CHECKS", "PRODUCT_REPOSITORY", "wants_upstream_sync"),
     ),

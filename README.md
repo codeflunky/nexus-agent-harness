@@ -19,6 +19,7 @@
 [How it works](#how-it-works) ·
 [Status](#status) ·
 [Get started](#get-started) ·
+[First run](docs/GETTING_STARTED.md) ·
 [Doctor](docs/DOCTOR.md) ·
 [Upstream](#upstream) ·
 [License](#license-and-credits)
@@ -74,6 +75,8 @@ hermes setup        # wizard
 hermes doctor       # diagnose the install
 ```
 
+**First run (setup → model → chat/TUI):** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md).
+
 Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
 
 Upstream one-liner installs and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); this fork is meant to be developed and run from source.
@@ -83,9 +86,9 @@ Upstream one-liner installs and Desktop packages still belong to [NousResearch/h
 > [!IMPORTANT]
 > **Status:** M1 (CLI/TUI Linux baseline) complete. What works today, what is partial, and what's next:
 >
-> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [Nexus smoke CI](.github/workflows/nexus-smoke.yml); protected fork markers.
-> - **Partly there:** interactive chat needs `hermes setup` / API keys; gateway channels off by default; Desktop later.
-> - **Next:** first-run path (setup → model → chat/TUI), harness defaults, upstream sync cadence — [docs/STATUS.md](docs/STATUS.md).
+> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [Nexus smoke CI](.github/workflows/nexus-smoke.yml) (incl. first-run gate); protected fork markers.
+> - **Partly there:** interactive chat still needs a real provider key; gateway channels off by default; Desktop later.
+> - **Next:** secure harness defaults, upstream sync cadence, gateway recipes — [docs/STATUS.md](docs/STATUS.md).
 
 ## Upstream
 

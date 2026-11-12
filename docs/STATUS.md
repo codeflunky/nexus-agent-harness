@@ -28,10 +28,10 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Craft Anything–style README
 - [x] Prove `hermes` + TUI build on Linux
 - [x] Visible product rebrand to **Nexus** (TUI/CLI chrome; `hermes` / `~/.hermes` unchanged)
-- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor allowlist + `ui-tui` build + protected-fork check); local `just nexus-smoke` / `scripts/ci/nexus_smoke.py`
+- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor allowlist + first-run gate + `ui-tui` build + protected-fork check); local `just nexus-smoke` / `just nexus-first-run`
 - [x] Document known doctor warnings ([docs/DOCTOR.md](DOCTOR.md))
 
-**M1 complete.** Next focus: M3 first-run path and remaining M2 items.
+**M1 complete. M3 first-run docs + gate smoke landed.** Remaining: M2 secure defaults / sync cadence; M3 gateway recipes and broader evals.
 
 ### M2 — Harness hardening
 
@@ -43,9 +43,9 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 
 ### M3 — Product surfaces (still terminal-first)
 
-- [ ] Reliable first-run path: setup → model → chat/TUI
+- [x] Reliable first-run path: setup → model → chat/TUI — [docs/GETTING_STARTED.md](GETTING_STARTED.md); gate smoke `scripts/ci/nexus_first_run_check.py` (no live API keys)
 - [ ] Optional gateway recipes once CLI/TUI is stable
-- [ ] Eval / smoke scripts for regressions
+- [ ] Eval / smoke scripts for regressions beyond first-run / doctor
 
 ### M4 — Desktop Win/Mac (later)
 
