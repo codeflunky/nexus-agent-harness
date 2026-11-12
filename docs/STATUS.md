@@ -27,13 +27,14 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] MIT license + NOTICE
 - [x] Craft Anything–style README
 - [x] Prove `hermes` + TUI build on Linux
+- [x] Visible product rebrand to **Nexus** (TUI/CLI chrome; `hermes` / `~/.hermes` unchanged)
 - [ ] Minimal CI: setup smoke + `hermes doctor` + `ui-tui` build
 - [ ] Document known doctor warnings (API keys, optional Docker)
 
 ### M2 — Harness hardening
 
 - [ ] Secure defaults for collaborative use (approvals, egress, secrets)
-- [ ] Clear fork identity in CLI banners / version strings without breaking upstream sync
+- [x] Clear fork identity in CLI banners / version strings without breaking upstream sync
 - [ ] Pin / document upstream sync cadence (`docs/UPSTREAM.md`)
 
 ### M3 — Product surfaces (still terminal-first)
