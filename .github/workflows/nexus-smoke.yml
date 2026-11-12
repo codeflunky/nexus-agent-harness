@@ -1,0 +1,50 @@
+name: Nexus smoke
+
+# Minimal CLI/TUI gate for the Nexus fork: version + doctor (allowlisted gaps) + ui-tui build.
+# Kept separate from the full Hermes CI matrix so this product baseline stays green on
+# standard GitHub-hosted runners.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nexus-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  smoke:
+    name: CLI + TUI smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up locked Python and Node (PM)
+        id: pm
+        uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          extras: '[]'
+          test-environment: 'false'
+
+      - name: Hermes version + doctor smoke
+        env:
+          HERMES_PYTHON: ${{ steps.pm.outputs.python-path }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/nexus_smoke.py
+
+      - name: Install ui-tui deps and build
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/nexus_smoke.py --skip-doctor --tui
+
+      - name: Protected fork markers
+        run: python3 scripts/ci/check_nexus_fork_files.py

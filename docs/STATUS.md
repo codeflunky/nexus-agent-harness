@@ -28,7 +28,7 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Craft Anything–style README
 - [x] Prove `hermes` + TUI build on Linux
 - [x] Visible product rebrand to **Nexus** (TUI/CLI chrome; `hermes` / `~/.hermes` unchanged)
-- [ ] Minimal CI: setup smoke + `hermes doctor` + `ui-tui` build
+- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor allowlist + `ui-tui` build + protected-fork check); local `just nexus-smoke` / `scripts/ci/nexus_smoke.py`
 - [ ] Document known doctor warnings (API keys, optional Docker)
 
 ### M2 — Harness hardening

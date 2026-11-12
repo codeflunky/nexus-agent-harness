@@ -70,6 +70,12 @@ check-repo-guards:
 check-nexus-fork:
     python3 scripts/ci/check_nexus_fork_files.py
 
+# Minimal Nexus CLI smoke (version + doctor allowlist). Add --tui to build ui-tui.
+[group('check')]
+[positional-arguments]
+nexus-smoke *args:
+    scripts/hermes-python scripts/ci/nexus_smoke.py {{args}}
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:
