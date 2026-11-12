@@ -23,6 +23,7 @@
 [Secure defaults](docs/SECURE_DEFAULTS.md) ·
 [Gateway](docs/GATEWAY.md) ·
 [Providers](docs/PROVIDERS.md) ·
+[Windows](docs/WINDOWS.md) ·
 [Doctor](docs/DOCTOR.md) ·
 [Upstream](#upstream) ·
 [License](#license-and-credits)
@@ -86,9 +87,11 @@ hermes doctor       # diagnose the install
 
 **Providers (Bedrock / Mantle / GovCloud):** [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
+**Windows (WSL2 or native PowerShell):** [docs/WINDOWS.md](docs/WINDOWS.md) — use `HERMES_REPO_URL` so the installer clones this fork (not the Hermes CDN).
+
 Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
 
-Upstream one-liner installs and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); this fork is meant to be developed and run from source.
+Upstream CDN one-liners and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). For Nexus, prefer source / `HERMES_REPO_URL` installers in [docs/WINDOWS.md](docs/WINDOWS.md).
 
 ## Status
 

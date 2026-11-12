@@ -88,6 +88,10 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
         ),
     ),
     (
+        "docs/WINDOWS.md",
+        ("HERMES_REPO_URL", "codeflunky/nexus-agent-harness", "WSL2", "install.ps1"),
+    ),
+    (
         "hermes_cli/config_defaults.py",
         ("Nexus collaborative default", '"mode": "manual"'),
     ),

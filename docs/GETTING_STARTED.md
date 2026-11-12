@@ -4,6 +4,8 @@ End-to-end path: **toolchain → setup → model → chat / TUI**.
 
 This fork is developed from source in this repo. Upstream CDN installers are optional; prefer the steps below.
 
+**Windows (WSL2 or native PowerShell):** see [WINDOWS.md](WINDOWS.md) — use `HERMES_REPO_URL` so installers clone this fork.
+
 ## 1. Provision the checkout
 
 ```bash

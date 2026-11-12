@@ -51,7 +51,7 @@ Listed paths include:
 |------|--------|
 | `LICENSE`, `NOTICE` | Ours (MIT + required notices) |
 | `README.md` | Ours (Craft Anything–style fork homepage) |
-| `docs/STATUS.md`, `docs/UPSTREAM.md`, `docs/SECURE_DEFAULTS.md`, `docs/GATEWAY.md`, `docs/PROVIDERS.md` | Ours |
+| `docs/STATUS.md`, `docs/UPSTREAM.md`, `docs/SECURE_DEFAULTS.md`, `docs/GATEWAY.md`, `docs/PROVIDERS.md`, `docs/WINDOWS.md` | Ours |
 | `hermes_cli/config_defaults.py` (`approvals.mode: manual`) | Ours |
 | `hermes_cli/fork_policy.py` | Ours |
 | Nexus branding surfaces (`banner.py`, `skin_engine.py`, TUI theme/i18n, `assets/nexus-banner.png`) | Ours |
