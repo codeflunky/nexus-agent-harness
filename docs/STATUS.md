@@ -1,0 +1,55 @@
+# Status and milestones
+
+Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus is **CLI/TUI on Linux**. Desktop (Windows/macOS) comes later.
+
+## Works today
+
+| Area | Notes |
+|------|--------|
+| Upstream import | `NousResearch/hermes-agent` merged into this repo; `upstream` remote documented |
+| License | Root [LICENSE](../LICENSE) is MIT; required notices in [NOTICE](../NOTICE) |
+| PM / Python | `setup-hermes.sh` + `source ./activate` → Python 3.14 toolchain |
+| CLI | `hermes --version`, `--help`, `doctor`, subcommands load |
+| TUI build | `pnpm --dir ui-tui run build` → `ui-tui/dist/entry.js` |
+| TUI launch | `hermes --tui` on a TTY; clean `hermes-tui: no TTY` without one |
+
+## Partly there
+
+- Interactive agent sessions need provider/API setup (`hermes setup` / `.env`)
+- Messaging gateway (Telegram, Discord, Slack, …) not configured in this fork's defaults
+- Desktop Electron app exists upstream under `apps/desktop` but is **out of scope** for the current milestone
+
+## Next milestones
+
+### M1 — CLI/TUI Linux baseline (current)
+
+- [x] Import upstream into this GitHub repo only
+- [x] MIT license + NOTICE
+- [x] Craft Anything–style README
+- [x] Prove `hermes` + TUI build on Linux
+- [ ] Minimal CI: setup smoke + `hermes doctor` + `ui-tui` build
+- [ ] Document known doctor warnings (API keys, optional Docker)
+
+### M2 — Harness hardening
+
+- [ ] Secure defaults for collaborative use (approvals, egress, secrets)
+- [ ] Clear fork identity in CLI banners / version strings without breaking upstream sync
+- [ ] Pin / document upstream sync cadence (`docs/UPSTREAM.md`)
+
+### M3 — Product surfaces (still terminal-first)
+
+- [ ] Reliable first-run path: setup → model → chat/TUI
+- [ ] Optional gateway recipes once CLI/TUI is stable
+- [ ] Eval / smoke scripts for regressions
+
+### M4 — Desktop Win/Mac (later)
+
+- [ ] Revisit `apps/desktop` packaging after CLI/TUI is solid
+- [ ] Windows and macOS installers / signed builds as a separate track
+- [ ] Do not block Linux terminal work on Desktop
+
+## Non-goals (for now)
+
+- Publishing a second repository
+- Replacing upstream's public install CDN as the primary distribution for this fork
+- Shipping Desktop as part of M1–M3

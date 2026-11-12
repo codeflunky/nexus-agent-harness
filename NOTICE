@@ -1,0 +1,42 @@
+nexus-agent-harness
+===================
+
+This repository is an MIT-licensed fork of Hermes Agent.
+
+Upstream
+--------
+
+    Project:   Hermes Agent
+    Upstream:  https://github.com/NousResearch/hermes-agent
+    Website:   https://hermes-agent.nousresearch.com
+    License:   MIT License
+    Copyright: (c) 2025–2026 Nous Research
+
+The bulk of this tree is derived from that upstream under the MIT License.
+Retain the upstream copyright and permission notice in all copies.
+
+Required third-party notices
+----------------------------
+
+Some bundled components keep their own licenses and notices. Do not remove them.
+
+### plugins/security-guidance (Apache License 2.0)
+
+This plugin includes work originally published in the claude-plugins-official
+repository by Anthropic, PBC., licensed under the Apache License, Version 2.0.
+
+    Source:    https://github.com/anthropics/claude-plugins-official
+    Subpath:   plugins/security-guidance/hooks/patterns.py
+    Commit:    0bde168 (2026-05-26)
+    License:   Apache License 2.0 (see plugins/security-guidance/LICENSE)
+    Notice:    plugins/security-guidance/NOTICE
+
+Apache-2.0 requires that attribution notices from the upstream NOTICE file be
+reproduced in derivative works. That notice is preserved in the plugin directory
+and summarized here.
+
+Other bundled licenses
+----------------------
+
+Individual skills, optional skills, and plugins may ship their own LICENSE or
+LICENSE.txt files. Those terms continue to apply to those components.
