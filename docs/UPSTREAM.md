@@ -33,7 +33,9 @@ git merge upstream/main
 
 ### Protected fork files (prefer ours)
 
-Listed in `hermes_cli.fork_policy.PROTECTED_FORK_PATHS`, including:
+Enforced by CI (`scripts/ci/check_nexus_fork_files.py`) from
+`hermes_cli.fork_policy.PROTECTED_FORK_CHECKS` (paths + required Nexus markers).
+Listed paths include:
 
 | Path | Prefer |
 |------|--------|

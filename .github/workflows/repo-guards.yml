@@ -77,6 +77,13 @@ jobs:
 
       # ── Always: policy guards on the bare checkout ────────────────────────────────────────
 
+      # Nexus fork identity: LICENSE/NOTICE/README/branding must keep product markers so an
+      # upstream Hermes sync cannot silently revert the fork. Contract lives in
+      # hermes_cli/fork_policy.py (PROTECTED_FORK_CHECKS); docs/UPSTREAM.md explains merges.
+      - name: Nexus protected fork files
+        if: ${{ !cancelled() }}
+        run: python3 scripts/ci/check_nexus_fork_files.py
+
       # PR infographics are rendered to an image-provider URL and embedded in the PR
       # *description*; the binary never belongs in git history. This leaked twice (#48261,
       # #54564) and `.gitignore` cannot stop `git add -f` or a differently-spelled directory

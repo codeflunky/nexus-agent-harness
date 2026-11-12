@@ -36,6 +36,7 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [ ] Secure defaults for collaborative use (approvals, egress, secrets)
 - [x] Clear fork identity in CLI banners / version strings without breaking upstream sync
 - [x] Origin-only `hermes update` by default; Hermes merge via `--sync-upstream` / sync branch (`docs/UPSTREAM.md`, `hermes_cli/fork_policy.py`)
+- [x] Protected fork files enforced in CI (`PROTECTED_FORK_CHECKS` + `scripts/ci/check_nexus_fork_files.py` in repo-guards)
 - [ ] Pin / document a recurring upstream sync cadence
 
 ### M3 — Product surfaces (still terminal-first)

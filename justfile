@@ -63,7 +63,12 @@ check-icons:
 # Run the repo-guards history and supply-chain steps against the merge base with origin/main
 [group('check')]
 check-repo-guards:
-    scripts/ci/local_step.sh scripts/ci/check_infographic_images.py scripts/ci/check_common_ancestor.py scripts/ci/check_contributor_emails.py 'scripts/ci/scan_supply_chain.py patterns' 'scripts/ci/scan_supply_chain.py dependency-bounds'
+    scripts/ci/local_step.sh scripts/ci/check_nexus_fork_files.py scripts/ci/check_infographic_images.py scripts/ci/check_common_ancestor.py scripts/ci/check_contributor_emails.py 'scripts/ci/scan_supply_chain.py patterns' 'scripts/ci/scan_supply_chain.py dependency-bounds'
+
+# Fail when Nexus protected fork files lose identity markers (hermes_cli/fork_policy.py)
+[group('check')]
+check-nexus-fork:
+    python3 scripts/ci/check_nexus_fork_files.py
 
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
