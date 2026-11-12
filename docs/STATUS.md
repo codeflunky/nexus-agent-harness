@@ -28,10 +28,10 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Craft Anything–style README
 - [x] Prove `hermes` + TUI build on Linux
 - [x] Visible product rebrand to **Nexus** (TUI/CLI chrome; `hermes` / `~/.hermes` unchanged)
-- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor allowlist + first-run gate + secure-defaults markers + `ui-tui` build + protected-fork check); local `just nexus-smoke` / `just nexus-first-run` / `just nexus-secure-defaults`
+- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor + first-run + secure-defaults + gateway docs + evals smoke + `ui-tui` + protected-fork); local `just nexus-*` recipes
 - [x] Document known doctor warnings ([docs/DOCTOR.md](DOCTOR.md))
 
-**M1 complete. M2 complete** (secure defaults + monthly sync cadence). **M3** first-run + gateway recipes landed; remaining: broader eval/smoke scripts.
+**M1 complete. M2 complete. M3 complete** (first-run, gateway recipes, CLI/import evals smoke). Next focus: **M4 Desktop** (later) or provider curation.
 
 ### M2 — Harness hardening
 
@@ -45,7 +45,7 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 
 - [x] Reliable first-run path: setup → model → chat/TUI — [docs/GETTING_STARTED.md](GETTING_STARTED.md); gate smoke `scripts/ci/nexus_first_run_check.py` (no live API keys)
 - [x] Optional gateway recipes — [docs/GATEWAY.md](GATEWAY.md) (Telegram / Discord / Slack / Microsoft Teams); `just nexus-gateway-docs`
-- [ ] Eval / smoke scripts for regressions beyond first-run / doctor
+- [x] Eval / smoke scripts for regressions beyond first-run / doctor — `scripts/ci/nexus_evals_smoke.py` / `just nexus-evals` (CLI `--help` + fork_policy; not upstream `evals/`)
 
 ### M4 — Desktop Win/Mac (later)
 

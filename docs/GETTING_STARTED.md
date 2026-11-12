@@ -76,6 +76,7 @@ TUI skips the classic first-run prompt and shows **Setup Required** in-app until
 hermes doctor              # exit 1 with only setup gaps is OK — see docs/DOCTOR.md
 just nexus-smoke           # version + doctor allowlist
 just nexus-first-run       # unconfigured gate + setup guidance + provider probe
+just nexus-evals           # CLI --help surfaces + fork_policy import (no live keys)
 ```
 
 ## What “configured” means

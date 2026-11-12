@@ -92,9 +92,9 @@ Upstream one-liner installs and Desktop packages still belong to [NousResearch/h
 > [!IMPORTANT]
 > **Status:** M1 (CLI/TUI Linux baseline) complete. What works today, what is partial, and what's next:
 >
-> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [secure defaults](docs/SECURE_DEFAULTS.md); [gateway recipes](docs/GATEWAY.md); monthly upstream sync cadence; [Nexus smoke CI](.github/workflows/nexus-smoke.yml); protected fork markers.
+> - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [secure defaults](docs/SECURE_DEFAULTS.md); [gateway recipes](docs/GATEWAY.md); monthly upstream sync cadence; Nexus smoke CI (incl. `just nexus-evals`); protected fork markers. **M1–M3 complete.**
 > - **Partly there:** interactive chat still needs a real provider key; gateway tokens optional; Desktop later.
-> - **Next:** broader eval/smoke scripts — [docs/STATUS.md](docs/STATUS.md).
+> - **Next:** provider curation (optional) or M4 Desktop — [docs/STATUS.md](docs/STATUS.md).
 
 ## Upstream
 

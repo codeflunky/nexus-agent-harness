@@ -39,7 +39,7 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
             "codeflunky/nexus-agent-harness",
         ),
     ),
-    ("docs/STATUS.md", ("Nexus", "Origin-only", "M1 complete", "M2 complete")),
+    ("docs/STATUS.md", ("Nexus", "Origin-only", "M1 complete", "M2 complete", "M3 complete")),
     (
         "docs/UPSTREAM.md",
         (

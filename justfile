@@ -91,6 +91,11 @@ nexus-secure-defaults:
 nexus-gateway-docs:
     scripts/hermes-python scripts/ci/nexus_gateway_docs_check.py
 
+# CLI/import regression smoke beyond first-run/doctor (no live API keys; not upstream evals/)
+[group('check')]
+nexus-evals:
+    scripts/hermes-python scripts/ci/nexus_evals_smoke.py
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:

@@ -62,6 +62,13 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/nexus_gateway_docs_check.py
 
+      - name: CLI help + fork_policy import (evals smoke)
+        env:
+          HERMES_PYTHON: ${{ steps.pm.outputs.python-path }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/nexus_evals_smoke.py
+
       - name: Install ui-tui deps and build
         run: |
           set -euo pipefail
