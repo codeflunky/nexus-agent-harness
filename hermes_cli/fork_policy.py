@@ -71,6 +71,10 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
         ),
     ),
     (
+        "docs/PROVIDERS.md",
+        ("us-gov-west-1", "us-gov-east-1", "Mantle", "ChatGPT", "IAM role"),
+    ),
+    (
         "hermes_cli/config_defaults.py",
         ("Nexus collaborative default", '"mode": "manual"'),
     ),

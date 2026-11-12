@@ -235,8 +235,60 @@ def merge_bedrock_openai_model_ids(model_ids: list[str]) -> list[str]:
     return merged + [m for m in BEDROCK_OPENAI_RESPONSES_MODEL_IDS if m.lower() not in seen]
 
 
+# AWS GovCloud regions Nexus curates for Bedrock + Mantle (OpenAI ChatGPT models are Mantle-only).
+BEDROCK_GOVCLOUD_REGIONS: frozenset[str] = frozenset({"us-gov-west-1", "us-gov-east-1"})
+
+
+def is_bedrock_govcloud_region(region: str) -> bool:
+    """True for AWS GovCloud Bedrock regions Nexus documents first-class."""
+    return (region or "").strip().lower() in BEDROCK_GOVCLOUD_REGIONS
+
+
+def bedrock_use_fips(config: Optional[dict[str, Any]] = None, region: str = "") -> bool:
+    """Whether to use FIPS Bedrock runtime hosts.
+
+    ``bedrock.fips`` true/false wins; when unset, defaults **on** for GovCloud regions
+    (Nexus collaborative / regulated posture) and off elsewhere.
+    """
+    if config is None:
+        with suppress(Exception):
+            from hermes_cli.config import load_config_readonly
+            config = load_config_readonly()
+    raw = ((config or {}).get("bedrock") or {}).get("fips", None)
+    if isinstance(raw, str):
+        lowered = raw.strip().lower()
+        if lowered in {"1", "true", "yes", "on"}:
+            return True
+        if lowered in {"0", "false", "no", "off"}:
+            return False
+        raw = None
+    if raw is True:
+        return True
+    if raw is False:
+        return False
+    resolved = (region or "").strip() or resolve_bedrock_runtime_region(config)
+    return is_bedrock_govcloud_region(resolved)
+
+
+def bedrock_runtime_base_url(
+    region: str = "",
+    *,
+    fips: Optional[bool] = None,
+    config: Optional[dict[str, Any]] = None,
+) -> str:
+    """``https://bedrock-runtime[-fips].<region>.amazonaws.com`` for Converse / AnthropicBedrock."""
+    resolved = (region or "").strip() or resolve_bedrock_runtime_region(config)
+    use_fips = bedrock_use_fips(config, resolved) if fips is None else bool(fips)
+    host = "bedrock-runtime-fips" if use_fips else "bedrock-runtime"
+    return f"https://{host}.{resolved}.amazonaws.com"
+
+
 def bedrock_openai_base_url(region: str) -> str:
-    """Return Bedrock Mantle's OpenAI-compatible base URL for *region*."""
+    """Return Bedrock Mantle's OpenAI-compatible base URL for *region*.
+
+    OpenAI ChatGPT models on Bedrock are Mantle-only (including GovCloud). Mantle hosts are
+    ``bedrock-mantle.<region>.api.aws`` — not the ``bedrock-runtime`` / FIPS runtime hosts.
+    """
     resolved = (region or "").strip() or resolve_bedrock_runtime_region()
     return f"https://bedrock-mantle.{resolved}.api.aws/openai/v1"
 
@@ -439,8 +491,8 @@ def resolve_bedrock_runtime_region(config: Optional[dict[str, Any]] = None) -> s
 
 
 def bedrock_region_from_runtime_url(base_url: str) -> str:
-    """AWS region from a ``bedrock-runtime.<region>.amazonaws.com`` URL (default us-east-1)."""
-    m = re.search(r"bedrock-runtime\.([a-z0-9-]+)\.", base_url or "")
+    """AWS region from a ``bedrock-runtime[-fips].<region>.amazonaws.com`` URL (default us-east-1)."""
+    m = re.search(r"bedrock-runtime(?:-fips)?\.([a-z0-9-]+)\.", base_url or "")
     return m.group(1) if m else "us-east-1"
 
 

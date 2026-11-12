@@ -22,8 +22,14 @@ _REGION_GEO = (("us.", ("us-", "us_gov")), ("eu.", ("eu-",)), ("ap.", ("ap-",)),
 
 
 def bedrock_region_geo_prefix(region_name: str) -> str:
-    """Map an AWS region name to its inference-profile geo prefix ('' = unknown)."""
+    """Map an AWS region name to its inference-profile geo prefix ('' = unknown).
+
+    GovCloud catalogs differ from commercial ``us.*`` profiles — return '' so the
+    picker does not hide GovCloud foundation-model IDs behind a commercial geo filter.
+    """
     r = (region_name or "").lower()
+    if r.startswith("us-gov-"):
+        return ""
     return next((geo for geo, prefixes in _REGION_GEO if r.startswith(prefixes)), "")
 
 
@@ -45,12 +51,16 @@ def bedrock_model_routable_from_region(model_id: str, region_name: str) -> bool:
 
 
 def _model_flow_bedrock_api_key(config, region, current_model=""):
-    """Bedrock API Key mode on the OpenAI-compatible bedrock-mantle endpoint — for developers
-    without an AWS account who received a Bedrock API Key from their AWS admin."""
+    """Bedrock API Key / Mantle path — required for OpenAI ChatGPT models on Bedrock (Mantle-only),
+    including GovCloud. Prefer short-lived keys; SigV4 role/SSO can also call Mantle without a bearer."""
+    from agent.bedrock_adapter import bedrock_openai_base_url, is_bedrock_govcloud_region
     from hermes_cli.auth import _resolve_api_key_provider_secret, ProviderConfig
     from hermes_cli.config import save_env_value
     from hermes_cli.models import _PROVIDER_MODELS
-    mantle_base_url = f"https://bedrock-mantle.{region}.api.aws/v1"
+    mantle_base_url = bedrock_openai_base_url(region)
+    if is_bedrock_govcloud_region(region):
+        _say("  GovCloud Mantle: OpenAI ChatGPT model IDs are Mantle-only.",
+             "  Prefer short-lived AWS_BEARER_TOKEN_BEDROCK or SigV4 via role/SSO.", "")
 
     # Check env var and credential pool (keys added via `hermes auth`)
     bedrock_pconfig = ProviderConfig(id="bedrock", name="Bedrock", auth_type="api_key", api_key_env_vars=("AWS_BEARER_TOKEN_BEDROCK",))
@@ -61,7 +71,7 @@ def _model_flow_bedrock_api_key(config, region, current_model=""):
         print(f"  Bedrock API Key: {existing_key[:12]}... ✓{source_suffix}")
     else:
         _say(f"  Endpoint: {mantle_base_url}", "")
-        api_key = _ask("  Bedrock API Key: ", secret=True, cancel_msg="")
+        api_key = _ask("  Bedrock API Key (short-lived preferred): ", secret=True, cancel_msg="")
         if api_key is None:
             return
         if not api_key:
@@ -94,7 +104,7 @@ def _model_flow_bedrock_api_key(config, region, current_model=""):
         _ensure_dict_section(cfg, "bedrock")["region"] = region
 
     # Saved as a custom provider pointing to bedrock-mantle (no inline endpoint fields).
-    if _finish_model(selected, "custom:bedrock-mantle", f"  Default model set to: {selected} (via Bedrock API Key, {region})",
+    if _finish_model(selected, "custom:bedrock-mantle", f"  Default model set to: {selected} (via Bedrock Mantle, {region})",
                      no_change="  No change.", drop_base_url=True, drop_api_mode=True, finish=_finish) is not None:
         print(f"  Endpoint: {mantle_base_url}")
 
@@ -164,18 +174,41 @@ def _model_flow_bedrock(config, current_model=""):
     _say(f"  AWS credentials: {auth_var} ✓" if auth_var else "  AWS credentials: boto3 default chain (instance role / SSO)",
          "")
 
-    # 2. Region selection
+    # 2. Region selection (Nexus curates GovCloud west/east first-class)
+    from agent.bedrock_adapter import (
+        BEDROCK_GOVCLOUD_REGIONS,
+        bedrock_runtime_base_url,
+        bedrock_use_fips,
+        is_bedrock_govcloud_region,
+    )
     current_region = resolve_bedrock_region()
+    gov = ", ".join(sorted(BEDROCK_GOVCLOUD_REGIONS))
+    _say(f"  GovCloud regions: {gov}",
+         "  OpenAI ChatGPT models on Bedrock require Mantle (option 2 below).", "")
     region_input = _ask(f"  AWS Region [{current_region}]: ", cancel_msg="")
     if region_input is None:
         return
     region = region_input or current_region
 
-    # 2b. Authentication mode
-    _say("  Choose authentication method:", "", "    1. IAM credential chain (recommended)",
-         "       Works with EC2 instance roles, SSO, env vars, aws configure", "    2. Bedrock API Key",
-         "       Enter your Bedrock API Key directly — also supports",
-         "       team scenarios where an admin distributes keys", "")
+    # 2a. FIPS for GovCloud (default on); optional elsewhere
+    bedrock_section = _ensure_dict_section(config, "bedrock")
+    if is_bedrock_govcloud_region(region):
+        fips_default = "Y" if bedrock_use_fips({"bedrock": bedrock_section}, region) else "N"
+        fips_ans = _ask(f"  Use FIPS Bedrock runtime endpoints? [{fips_default}]: ", cancel_msg="")
+        if fips_ans is None:
+            return
+        ans = (fips_ans or fips_default).strip().lower()
+        bedrock_section["fips"] = ans in {"", "y", "yes", "true", "1", "on"}
+    elif "fips" not in bedrock_section:
+        bedrock_section["fips"] = None  # auto (off outside GovCloud)
+
+    # 2b. Authentication mode — Nexus prefers role/SSO; Mantle API key for OpenAI models
+    _say("  Choose authentication method:", "",
+         "    1. IAM role / SSO profile (recommended for Nexus)",
+         "       Instance/task/IRSA role, AWS_PROFILE (Identity Center), assume-role",
+         "    2. Bedrock Mantle API key",
+         "       Required path for OpenAI ChatGPT models (Mantle-only), incl. GovCloud;",
+         "       prefer short-lived AWS_BEARER_TOKEN_BEDROCK", "")
     auth_choice = _ask("  Choice [1]: ", raw=True, cancel_msg="")
     if auth_choice is None:
         return
@@ -198,9 +231,15 @@ def _model_flow_bedrock(config, current_model=""):
         print(f"  Using {len(model_list)} curated models (live discovery unavailable)")
 
     # 4. Model selection
-    runtime_url = f"https://bedrock-runtime.{region}.amazonaws.com"
+    runtime_url = bedrock_runtime_base_url(region, config={"bedrock": bedrock_section})
     selected = _pick_model_or_prompt(model_list, "  Model ID: ", current_model=current_model, confirm_provider="bedrock", confirm_base_url=runtime_url)
     # api_mode is dropped: bedrock_converse is auto-detected.
+
+    def _finish_bedrock(cfg, _m):
+        section = _ensure_dict_section(cfg, "bedrock")
+        section["region"] = region
+        if "fips" in bedrock_section:
+            section["fips"] = bedrock_section["fips"]
+
     _finish_model(selected, "bedrock", f"  Default model set to: {selected} (via AWS Bedrock, {region})", no_change="  No change.",
-                  base_url=runtime_url, drop_api_mode=True,
-                  finish=lambda cfg, _m: _ensure_dict_section(cfg, "bedrock").__setitem__("region", region))
+                  base_url=runtime_url, drop_api_mode=True, finish=_finish_bedrock)

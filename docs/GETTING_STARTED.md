@@ -92,6 +92,7 @@ Probe: `hermes_cli.main._has_any_provider_configured()`.
 ## Related
 
 - [docs/SECURE_DEFAULTS.md](SECURE_DEFAULTS.md) — approvals, secrets, egress  
+- [docs/PROVIDERS.md](PROVIDERS.md) — Bedrock / Mantle / GovCloud  
 - [docs/GATEWAY.md](GATEWAY.md) — Telegram / Discord / Slack / Microsoft Teams recipes  
 - [docs/DOCTOR.md](DOCTOR.md) — expected doctor warnings  
 - [docs/STATUS.md](STATUS.md) — milestones  

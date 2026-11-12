@@ -22,6 +22,7 @@
 [First run](docs/GETTING_STARTED.md) ·
 [Secure defaults](docs/SECURE_DEFAULTS.md) ·
 [Gateway](docs/GATEWAY.md) ·
+[Providers](docs/PROVIDERS.md) ·
 [Doctor](docs/DOCTOR.md) ·
 [Upstream](#upstream) ·
 [License](#license-and-credits)
@@ -83,6 +84,8 @@ hermes doctor       # diagnose the install
 
 **Gateway (Telegram / Discord / Slack / Microsoft Teams):** [docs/GATEWAY.md](docs/GATEWAY.md).
 
+**Providers (Bedrock / Mantle / GovCloud):** [docs/PROVIDERS.md](docs/PROVIDERS.md).
+
 Expected doctor warnings (missing `.env`, API keys, optional Docker, etc.): [docs/DOCTOR.md](docs/DOCTOR.md).
 
 Upstream one-liner installs and Desktop packages still belong to [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); this fork is meant to be developed and run from source.
@@ -94,7 +97,7 @@ Upstream one-liner installs and Desktop packages still belong to [NousResearch/h
 >
 > - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [secure defaults](docs/SECURE_DEFAULTS.md); [gateway recipes](docs/GATEWAY.md); monthly upstream sync cadence; Nexus smoke CI (incl. `just nexus-evals`); protected fork markers. **M1–M3 complete.**
 > - **Partly there:** interactive chat still needs a real provider key; gateway tokens optional; Desktop later.
-> - **Next:** provider curation (optional) or M4 Desktop — [docs/STATUS.md](docs/STATUS.md).
+> - **Next:** more provider recipes or M4 Desktop — [docs/STATUS.md](docs/STATUS.md). Bedrock/Mantle GovCloud: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
 ## Upstream
 

@@ -96,6 +96,11 @@ nexus-gateway-docs:
 nexus-evals:
     scripts/hermes-python scripts/ci/nexus_evals_smoke.py
 
+# Bedrock GovCloud + Mantle URL/FIPS helpers (no live AWS calls)
+[group('check')]
+nexus-bedrock-govcloud:
+    scripts/hermes-python scripts/ci/nexus_bedrock_govcloud_check.py
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:

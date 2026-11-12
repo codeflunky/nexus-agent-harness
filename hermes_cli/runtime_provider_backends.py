@@ -214,9 +214,10 @@ def _resolve_bedrock_runtime(requested_provider: str, model_cfg: dict[str, Any],
     Claude → AnthropicBedrock SDK (prompt caching, thinking budgets); others → Converse API.
     AWS_BEARER_TOKEN_BEDROCK auth is unsupported by AnthropicBedrock (SigV4 only), so bearer users
     go through Converse regardless of model."""
-    from agent.bedrock_adapter import (bedrock_openai_base_url, bedrock_openai_uses_mantle, has_aws_credentials,
-                                       is_anthropic_bedrock_model, resolve_aws_auth_env_var, resolve_bedrock_bearer_token,
-                                       resolve_bedrock_runtime_region, bedrock_guardrail_config)
+    from agent.bedrock_adapter import (bedrock_openai_base_url, bedrock_openai_uses_mantle, bedrock_runtime_base_url,
+                                       has_aws_credentials, is_anthropic_bedrock_model, resolve_aws_auth_env_var,
+                                       resolve_bedrock_bearer_token, resolve_bedrock_runtime_region,
+                                       bedrock_guardrail_config)
     from hermes_cli.config import load_config  # direct (not the origin delegate), as before
     rp = _rp()
     # Explicitly selected bedrock trusts boto3's credential chain (IMDS, ECS/Lambda roles, SSO)
@@ -224,21 +225,24 @@ def _resolve_bedrock_runtime(requested_provider: str, model_cfg: dict[str, Any],
     is_explicit = requested_provider in {"bedrock", "aws", "aws-bedrock", "amazon-bedrock", "amazon"}
     if not is_explicit and not has_aws_credentials():
         raise rp.AuthError(
-            "No AWS credentials found for Bedrock. Configure one of:\n"
-            "  - AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY\n"
-            "  - AWS_PROFILE (for SSO / named profiles)\n"
-            "  - IAM instance role (EC2, ECS, Lambda)\n"
-            "Or run 'aws configure' to set up credentials.",
+            "No AWS credentials found for Bedrock. Prefer (Nexus):\n"
+            "  - IAM instance / task / IRSA role (no keys in .env)\n"
+            "  - AWS_PROFILE (IAM Identity Center SSO / assume-role)\n"
+            "  - Short-lived AWS_BEARER_TOKEN_BEDROCK for Mantle OpenAI models\n"
+            "  - AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY (last resort)\n"
+            "Or run 'aws configure sso' / attach a Bedrock-capable role.",
             code="no_aws_credentials",
         )
     bedrock_cfg = load_config().get("bedrock", {})
     # Region priority (config.yaml bedrock.region → env → us-east-1) lives in the adapter.
+    # GovCloud: us-gov-west-1 / us-gov-east-1; FIPS runtime hosts auto-on for GovCloud unless overridden.
     region = resolve_bedrock_runtime_region({"bedrock": bedrock_cfg})
     auth_source = resolve_aws_auth_env_var() or "aws-sdk-default-chain"
     guardrail_config = bedrock_guardrail_config({"bedrock": bedrock_cfg})
     current_model = str(target_model or model_cfg.get("default") or "").strip()
     has_bearer_token = bool(os.environ.get("AWS_BEARER_TOKEN_BEDROCK", "").strip())
-    runtime = rp._runtime("bedrock", "bedrock_converse", f"https://bedrock-runtime.{region}.amazonaws.com", "aws-sdk",
+    runtime_url = bedrock_runtime_base_url(region, config={"bedrock": bedrock_cfg})
+    runtime = rp._runtime("bedrock", "bedrock_converse", runtime_url, "aws-sdk",
                           source=auth_source, region=region, requested_provider=requested_provider)
     if bedrock_openai_uses_mantle(current_model):
         bearer = resolve_bedrock_bearer_token()

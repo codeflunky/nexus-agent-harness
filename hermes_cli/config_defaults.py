@@ -694,7 +694,10 @@ DEFAULT_CONFIG = {
     # openrouter.ai/docs/guides/routing/routers/pareto-router
     "openrouter": {"response_cache": True, "response_cache_ttl": 300, "min_coding_score": 0.65},
     "bedrock": {  # AWS Bedrock; only used when model.provider is "bedrock".
-        "region": "",  # empty = AWS_REGION env var → us-east-1
+        "region": "",  # empty = AWS_REGION env var → us-east-1; GovCloud: us-gov-west-1 / us-gov-east-1
+        # FIPS runtime hosts (bedrock-runtime-fips.<region>.amazonaws.com). null/omit = auto
+        # (on for GovCloud, off elsewhere). Mantle OpenAI endpoints are separate and non-FIPS.
+        "fips": None,
         "discovery": {
             "enabled": True,           # auto-discover models via ListFoundationModels
             "provider_filter": [],     # restrict to these providers, e.g. ["anthropic", "amazon"]
@@ -2808,7 +2811,7 @@ OPTIONAL_ENV_VARS = OptionalEnvVars({
         "https://console.upstage.ai/api-keys", advanced=False),
     "UPSTAGE_BASE_URL": _prov("Upstage base URL override (default: https://api.upstage.ai/v1)",
         "Upstage base URL (leave empty for default)", None, password=False),
-    "AWS_REGION": _prov("AWS region for Bedrock API calls (e.g. us-east-1, eu-central-1)",
+    "AWS_REGION": _prov("AWS region for Bedrock API calls (e.g. us-east-1, us-gov-west-1, us-gov-east-1)",
         "AWS Region", "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-regions.html",
         password=False),
     "AWS_PROFILE": _prov("AWS named profile for Bedrock authentication (from ~/.aws/credentials)",

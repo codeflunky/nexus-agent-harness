@@ -423,7 +423,7 @@ def host_mandated_api_mode(base_url: str = "") -> Optional[str]:
         # summaries, and prompt caching live on /v1/responses, and /v1/chat/completions is only a minimal
         # compatibility shim (docs.router.com/api/endpoint). Exact-hostname match per #32243.
         return "codex_responses"
-    if hostname.startswith("bedrock-runtime.") and base_url_host_matches(base_url, "amazonaws.com"):
+    if (hostname.startswith("bedrock-runtime.") or hostname.startswith("bedrock-runtime-fips.")) and base_url_host_matches(base_url, "amazonaws.com"):
         return "bedrock_converse"
     return None
 

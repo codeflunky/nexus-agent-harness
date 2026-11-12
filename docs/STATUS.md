@@ -31,7 +31,7 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor + first-run + secure-defaults + gateway docs + evals smoke + `ui-tui` + protected-fork); local `just nexus-*` recipes
 - [x] Document known doctor warnings ([docs/DOCTOR.md](DOCTOR.md))
 
-**M1 complete. M2 complete. M3 complete** (first-run, gateway recipes, CLI/import evals smoke). Next focus: **M4 Desktop** (later) or provider curation.
+**M1 complete. M2 complete. M3 complete.** Provider curation underway (Bedrock / Mantle GovCloud). Next: more providers or **M4 Desktop** (later).
 
 ### M2 — Harness hardening
 
@@ -46,6 +46,11 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Reliable first-run path: setup → model → chat/TUI — [docs/GETTING_STARTED.md](GETTING_STARTED.md); gate smoke `scripts/ci/nexus_first_run_check.py` (no live API keys)
 - [x] Optional gateway recipes — [docs/GATEWAY.md](GATEWAY.md) (Telegram / Discord / Slack / Microsoft Teams); `just nexus-gateway-docs`
 - [x] Eval / smoke scripts for regressions beyond first-run / doctor — `scripts/ci/nexus_evals_smoke.py` / `just nexus-evals` (CLI `--help` + fork_policy; not upstream `evals/`)
+
+### Provider curation
+
+- [x] AWS Bedrock + Mantle GovCloud (`us-gov-west-1` / `us-gov-east-1`), FIPS auto-on for GovCloud runtime, role/SSO-first auth docs — [docs/PROVIDERS.md](PROVIDERS.md); `just nexus-bedrock-govcloud`
+- [ ] Additional provider recipes (OpenRouter, local OpenAI-compatible, OAuth) — deferred
 
 ### M4 — Desktop Win/Mac (later)
 
