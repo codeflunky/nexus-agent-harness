@@ -81,6 +81,11 @@ nexus-smoke *args:
 nexus-first-run:
     scripts/hermes-python scripts/ci/nexus_first_run_check.py
 
+# Secure-defaults markers: approvals.mode=manual, docs, loose-.env probe
+[group('check')]
+nexus-secure-defaults:
+    scripts/hermes-python scripts/ci/nexus_secure_defaults_check.py
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:

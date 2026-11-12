@@ -20,6 +20,16 @@ git remote add upstream https://github.com/NousResearch/hermes-agent.git
 git fetch upstream
 ```
 
+## Sync cadence (pinned)
+
+| Cadence | What |
+|---------|------|
+| **Monthly** | Planned `upstream/main` merge on a dated branch (`sync/upstream-YYYYMMDD`). Default for Nexus. |
+| **Sooner** | Security advisories, critical runtime bugs, or dependency CVEs that affect CLI/TUI Linux. |
+| **Not automatic** | `hermes update` never merges Hermes; only `hermes update --sync-upstream` or a manual git merge does. |
+
+Record the last intentional sync in a PR description (and optionally a short note under *Verified baseline* below). Skip months when nothing material landed upstream.
+
 ## Syncing Hermes (deliberate)
 
 Prefer a working branch — do **not** rely on `hermes update --sync-upstream` for routine merges:
@@ -41,7 +51,8 @@ Listed paths include:
 |------|--------|
 | `LICENSE`, `NOTICE` | Ours (MIT + required notices) |
 | `README.md` | Ours (Craft Anything–style fork homepage) |
-| `docs/STATUS.md`, `docs/UPSTREAM.md` | Ours |
+| `docs/STATUS.md`, `docs/UPSTREAM.md`, `docs/SECURE_DEFAULTS.md` | Ours |
+| `hermes_cli/config_defaults.py` (`approvals.mode: manual`) | Ours |
 | `hermes_cli/fork_policy.py` | Ours |
 | Nexus branding surfaces (`banner.py`, `skin_engine.py`, TUI theme/i18n, `assets/nexus-banner.png`) | Ours |
 | Everything else | Upstream unless we have intentional fork patches |

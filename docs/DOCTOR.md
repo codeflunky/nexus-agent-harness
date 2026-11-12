@@ -18,12 +18,23 @@ After `source ./activate` (or PM setup), these are **OK to ignore** until you ne
 | Skills Hub not initialized | Skills catalog not pulled | `hermes skills list` when you need it |
 | `computer_use` / `vision` / `video` “system dependency not met” | Optional multimodal stacks | When you need those tools |
 
+## Secure defaults (new advisories)
+
+Doctor also checks collaborative security posture ([docs/SECURE_DEFAULTS.md](SECURE_DEFAULTS.md)):
+
+| Finding | Severity | Fix |
+|---------|----------|-----|
+| `.env` group/world accessible | Numbered issue (CI-fatal) | `chmod 600 ~/.hermes/.env` or `hermes doctor --fix` |
+| `~/.hermes` group/world accessible | Warning | `chmod 700 ~/.hermes` (or `--fix`) |
+| `HERMES_YOLO_MODE` set / `approvals.mode: off` or `smart` | Warning | Unset YOLO; prefer `approvals.mode: manual` |
+
 ## Blocking for day-to-day use
 
 Fix these before expecting a working interactive agent:
 
 1. **Create `.env` and pick a model/provider** — `hermes setup` (or `hermes model`).
 2. **Confirm `hermes --version` shows Nexus Agent** and the PM env is activated (`source ./activate`).
+3. **Keep `.env` mode `600`** — doctor fails CI if secrets are group/world-readable.
 
 ## Install / PATH noise
 

@@ -28,18 +28,18 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Craft Anything–style README
 - [x] Prove `hermes` + TUI build on Linux
 - [x] Visible product rebrand to **Nexus** (TUI/CLI chrome; `hermes` / `~/.hermes` unchanged)
-- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor allowlist + first-run gate + `ui-tui` build + protected-fork check); local `just nexus-smoke` / `just nexus-first-run`
+- [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor allowlist + first-run gate + secure-defaults markers + `ui-tui` build + protected-fork check); local `just nexus-smoke` / `just nexus-first-run` / `just nexus-secure-defaults`
 - [x] Document known doctor warnings ([docs/DOCTOR.md](DOCTOR.md))
 
-**M1 complete. M3 first-run docs + gate smoke landed.** Remaining: M2 secure defaults / sync cadence; M3 gateway recipes and broader evals.
+**M1 complete. M2 complete** (secure defaults + monthly sync cadence). **M3** first-run landed; remaining: gateway recipes and broader evals.
 
 ### M2 — Harness hardening
 
-- [ ] Secure defaults for collaborative use (approvals, egress, secrets)
+- [x] Secure defaults for collaborative use (approvals, egress, secrets) — [docs/SECURE_DEFAULTS.md](SECURE_DEFAULTS.md); `approvals.mode: manual`; doctor perms / YOLO advisories; `just nexus-secure-defaults`
 - [x] Clear fork identity in CLI banners / version strings without breaking upstream sync
 - [x] Origin-only `hermes update` by default; Hermes merge via `--sync-upstream` / sync branch (`docs/UPSTREAM.md`, `hermes_cli/fork_policy.py`)
 - [x] Protected fork files enforced in CI (`PROTECTED_FORK_CHECKS` + `scripts/ci/check_nexus_fork_files.py` in repo-guards)
-- [ ] Pin / document a recurring upstream sync cadence
+- [x] Pin / document a recurring upstream sync cadence — monthly (sooner for security) in [docs/UPSTREAM.md](UPSTREAM.md)
 
 ### M3 — Product surfaces (still terminal-first)
 

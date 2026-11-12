@@ -586,6 +586,22 @@ terminal:
 #   sudo_password: "your-password-here"
 
 # =============================================================================
+# Approvals (Nexus collaborative defaults — see docs/SECURE_DEFAULTS.md)
+# =============================================================================
+# approvals:
+#   # manual = always prompt (Nexus default). smart = aux LLM may auto-approve.
+#   # off = same as --yolo / HERMES_YOLO_MODE (avoid on shared hosts).
+#   mode: manual
+#   timeout: 300
+#   cron_mode: deny
+#   single_query_mode: deny
+#   unattended_mode: deny
+#   # [] = requester + admins when messaging; ["*"] = any admitted member.
+#   approvers: []
+#   # fnmatch globs that stay blocked even under --yolo, e.g. "git push --force*".
+#   deny: []
+
+# =============================================================================
 # Security
 # =============================================================================
 # security:
@@ -594,6 +610,7 @@ terminal:
 #   # hybrid sidecar (browser.auto_local_for_private_urls) are not covered.
 #   # Cloud-metadata endpoints stay blocked even when true.
 #   allow_private_urls: false
+#   redact_secrets: true
 #   approval:
 #     transport: builtin        # Or an explicitly enabled plugin transport name
 #     transport_fallback: deny  # Set builtin to opt into fallback on transport failure

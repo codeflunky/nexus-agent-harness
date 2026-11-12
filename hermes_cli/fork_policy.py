@@ -39,15 +39,29 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
             "codeflunky/nexus-agent-harness",
         ),
     ),
-    ("docs/STATUS.md", ("Nexus", "Origin-only", "M1 complete")),
+    ("docs/STATUS.md", ("Nexus", "Origin-only", "M1 complete", "M2 complete")),
     (
         "docs/UPSTREAM.md",
-        ("PROTECTED_FORK", "Updates from **origin** only", "codeflunky/nexus-agent-harness"),
+        (
+            "PROTECTED_FORK",
+            "Updates from **origin** only",
+            "codeflunky/nexus-agent-harness",
+            "Sync cadence",
+            "Monthly",
+        ),
     ),
     ("docs/DOCTOR.md", ("hermes doctor", "expected warnings", "Nexus")),
     (
         "docs/GETTING_STARTED.md",
         ("setup → model → chat", "hermes setup", "Nexus isn't configured yet"),
+    ),
+    (
+        "docs/SECURE_DEFAULTS.md",
+        ("mode: manual", "chmod 600", "collaborative"),
+    ),
+    (
+        "hermes_cli/config_defaults.py",
+        ("Nexus collaborative default", '"mode": "manual"'),
     ),
     (
         "hermes_cli/fork_policy.py",

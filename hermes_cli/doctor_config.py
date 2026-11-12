@@ -167,6 +167,39 @@ def _check_mcp_security(should_fix: bool, f: Finding) -> None:
         check_ok("No suspicious MCP stdio commands")
 
 
+def path_has_group_or_other_access(path) -> bool:
+    """True when *path* is readable/writable/executable by group or other (mode & 0o077)."""
+    try:
+        return bool(path.stat().st_mode & 0o077)
+    except OSError:
+        return False
+
+
+def _tighten_secret_path(path, mode: int = 0o600) -> bool:
+    """Best-effort chmod; returns True when the mode was applied."""
+    try:
+        os.chmod(str(path), mode)
+        return True
+    except OSError:
+        return False
+
+
+def _check_secret_path_perms(path, *, display: str, mode: int, should_fix: bool, f: Finding) -> None:
+    """Fail closed on group/other bits for secret files/dirs; ``--fix`` chmods when possible."""
+    if not path.exists():
+        return
+    if not path_has_group_or_other_access(path):
+        check_ok(f"{display} permissions are owner-only")
+        return
+    oct_mode = oct(path.stat().st_mode & 0o777)
+    check_fail(f"{display} is group/world accessible", f"({oct_mode})")
+    if should_fix and _tighten_secret_path(path, mode):
+        check_ok(f"Tightened {display} to {oct(mode)}")
+        f.fixed += 1
+        return
+    f.issues.append(f"Tighten {display} permissions (chmod {oct(mode)[2:]} {display})")
+
+
 @doctor_check()
 def _check_env_file(should_fix: bool, f: Finding) -> None:
     """Managed scope plus ~/.hermes/.env presence and provider credentials."""
@@ -175,6 +208,7 @@ def _check_env_file(should_fix: bool, f: Finding) -> None:
     env_path = HERMES_HOME / '.env'
     if env_path.exists():
         check_ok(f"{_DHH}/.env file exists")
+        _check_secret_path_perms(env_path, display=f"{_DHH}/.env", mode=0o600, should_fix=should_fix, f=f)
         # UTF-8 first; latin-1 fallback for Windows Notepad/cp1252 files (matches env_loader._load_dotenv_with_fallback).
         try:
             content = env_path.read_text(encoding="utf-8-sig")
@@ -184,6 +218,7 @@ def _check_env_file(should_fix: bool, f: Finding) -> None:
             f.issues.append("Run 'hermes setup' to configure API keys")
     elif (PROJECT_ROOT / '.env').exists():  # project root as fallback
         check_ok(".env file exists (in project directory)")
+        _check_secret_path_perms(PROJECT_ROOT / '.env', display=".env (project)", mode=0o600, should_fix=should_fix, f=f)
     else:
         check_fail(f"{_DHH}/.env file missing")
         if should_fix:
@@ -198,6 +233,41 @@ def _check_env_file(should_fix: bool, f: Finding) -> None:
         else:
             check_info("Run 'hermes setup' to create one")
             f.issues.append("Run 'hermes setup' to create .env")
+    # Home directory should be owner-only (secrets + sessions). Warn + optional --fix;
+    # do not hard-fail CI on common 0755 homes — .env mode above is the blocking check.
+    if HERMES_HOME.exists() and path_has_group_or_other_access(HERMES_HOME):
+        oct_mode = oct(HERMES_HOME.stat().st_mode & 0o777)
+        check_warn(f"{_DHH} is group/world accessible", f"({oct_mode}; prefer chmod 700)")
+        if should_fix and _tighten_secret_path(HERMES_HOME, 0o700):
+            check_ok(f"Tightened {_DHH} to 0o700")
+            f.fixed += 1
+    elif HERMES_HOME.exists():
+        check_ok(f"{_DHH} permissions are owner-only")
+
+
+@doctor_check(on_error="Could not check secure defaults")
+def _check_secure_defaults(should_fix: bool, f: Finding) -> None:
+    """Advisory checks for YOLO / approvals.mode=off (warn-only; see docs/SECURE_DEFAULTS.md)."""
+    del should_fix  # advisory only
+    _section("Secure Defaults")
+    yolo_env = str(os.environ.get("HERMES_YOLO_MODE") or "").strip().lower()
+    if yolo_env in {"1", "true", "yes", "on"}:
+        check_warn("HERMES_YOLO_MODE is set", "(dangerous commands auto-approved — unset on shared hosts)")
+    else:
+        check_ok("HERMES_YOLO_MODE unset")
+
+    mode = "manual"
+    with warn_on_error(""):
+        from hermes_cli.config import load_config
+        approvals = (load_config() or {}).get("approvals") or {}
+        if isinstance(approvals, dict):
+            mode = str(approvals.get("mode") or "manual").strip().lower() or "manual"
+    if mode == "off":
+        check_warn("approvals.mode is off", "(same as --yolo — prefer manual; docs/SECURE_DEFAULTS.md)")
+    elif mode == "smart":
+        check_warn("approvals.mode is smart", "(aux LLM may auto-approve; Nexus collaborative default is manual)")
+    else:
+        check_ok(f"approvals.mode is {mode}")
 
 
 def _known_provider_ids(cfg: dict) -> tuple[set, list, object, object, object]:
