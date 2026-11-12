@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Nexus Agent Harness" width="100%">
+  <img src="assets/nexus-banner.png" alt="Nexus Agent" width="100%">
 </p>
 
 <div align="center">
