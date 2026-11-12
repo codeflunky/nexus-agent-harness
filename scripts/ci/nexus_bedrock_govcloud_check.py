@@ -76,6 +76,8 @@ def main() -> int:
         "IAM role",
         "AWS_PROFILE",
         "AWS_BEARER_TOKEN_BEDROCK",
+        "Local (OpenAI-compatible)",
+        "OAuth",
     ):
         if marker not in docs:
             raise SystemExit(f"docs/PROVIDERS.md missing marker: {marker}")

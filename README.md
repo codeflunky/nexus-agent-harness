@@ -97,7 +97,7 @@ Upstream one-liner installs and Desktop packages still belong to [NousResearch/h
 >
 > - **Works today (Linux):** import of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent); MIT + [NOTICE](NOTICE); Nexus branding; PM setup; `hermes` / TUI build; [first-run path](docs/GETTING_STARTED.md); [secure defaults](docs/SECURE_DEFAULTS.md); [gateway recipes](docs/GATEWAY.md); monthly upstream sync cadence; Nexus smoke CI (incl. `just nexus-evals`); protected fork markers. **M1–M3 complete.**
 > - **Partly there:** interactive chat still needs a real provider key; gateway tokens optional; Desktop later.
-> - **Next:** more provider recipes or M4 Desktop — [docs/STATUS.md](docs/STATUS.md). Bedrock/Mantle GovCloud: [docs/PROVIDERS.md](docs/PROVIDERS.md).
+> - **Next:** M4 Desktop (later) or optional OpenRouter recipes — [docs/STATUS.md](docs/STATUS.md). Providers: [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
 ## Upstream
 

@@ -76,6 +76,13 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/nexus_bedrock_govcloud_check.py
 
+      - name: Local + OAuth provider recipes
+        env:
+          HERMES_PYTHON: ${{ steps.pm.outputs.python-path }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/nexus_providers_check.py
+
       - name: Install ui-tui deps and build
         run: |
           set -euo pipefail

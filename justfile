@@ -101,6 +101,11 @@ nexus-evals:
 nexus-bedrock-govcloud:
     scripts/hermes-python scripts/ci/nexus_bedrock_govcloud_check.py
 
+# Local + OAuth provider curation markers (no live logins)
+[group('check')]
+nexus-providers:
+    scripts/hermes-python scripts/ci/nexus_providers_check.py
+
 # Fail when uv.lock is out of sync with pyproject.toml (re-resolves against PyPI; prepares pm's runtime in the Hermes home)
 [group('check')]
 check-uv-lock:

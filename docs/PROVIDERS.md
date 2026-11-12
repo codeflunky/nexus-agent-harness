@@ -1,26 +1,145 @@
-# Provider curation (Nexus) — AWS Bedrock & Mantle
+# Provider curation (Nexus)
 
-Nexus keeps upstream providers, then **curates** AWS Bedrock for collaborative and
-**GovCloud** use. OpenAI **ChatGPT** model IDs on Bedrock are **Mantle-only**
-(including in GovCloud).
+Nexus keeps upstream providers, then **curates** the paths that fit a collaborative
+harness: **AWS Bedrock / Mantle (GovCloud)**, **local OpenAI-compatible**, and
+**OAuth logins** (short-lived tokens, not pasted long-lived keys).
 
-Deep upstream guide: [website/docs/guides/aws-bedrock.md](../website/docs/guides/aws-bedrock.md).
+| Need | Path |
+|------|------|
+| FedRAMP / GovCloud Claude–Nova | Bedrock Converse + IAM role/SSO (+ FIPS) |
+| GovCloud **ChatGPT** models | Bedrock **Mantle** (bearer or SigV4) |
+| Air-gapped / private GPU | **Local** OpenAI-compatible (`/v1`) |
+| Cloud login without API keys | **OAuth** (Nous Portal, OpenAI Codex, …) |
 
-## Surfaces
+Upstream deep dives: [integrations/providers.md](../website/docs/integrations/providers.md),
+[aws-bedrock.md](../website/docs/guides/aws-bedrock.md).
+
+---
+
+## Local (OpenAI-compatible)
+
+Point Nexus at a model server **you** run. No cloud inference key is required for
+many local stacks.
+
+| Stack | Base URL | Notes |
+|-------|----------|--------|
+| **Ollama** | `http://localhost:11434/v1` | Usually no API key |
+| **LM Studio** | `http://127.0.0.1:1234/v1` | First-class `lmstudio` provider; or custom |
+| **vLLM / SGLang / llama.cpp** | `http://localhost:8000/v1` (etc.) | Optional key |
+| **On-prem NIM / other** | your `…/v1` | Use placeholder key if authless |
+
+### Wizard
+
+```bash
+hermes model
+# → Custom endpoint  (aliases: ollama / local / vllm …)
+#    URL: http://localhost:11434/v1
+#    API key: skip for local
+# or → LM Studio (defaults to http://127.0.0.1:1234/v1)
+```
+
+### Config examples
+
+**Named local (recommended):**
+
+```yaml
+providers:
+  local:
+    base_url: http://localhost:11434/v1
+    # api_key: optional
+model:
+  provider: custom:local
+  default: qwen2.5          # whatever /v1/models reports
+```
+
+**LM Studio:**
+
+```yaml
+model:
+  provider: lmstudio
+  default: <model-id>
+# optional: LM_BASE_URL / LM_API_KEY in ~/.hermes/.env
+```
+
+**Generic custom:**
+
+```yaml
+model:
+  provider: custom
+  base_url: http://localhost:8000/v1
+  default: my-model
+```
+
+### Local caveats (Nexus)
+
+- Prefer `approvals.mode: manual` on shared machines ([SECURE_DEFAULTS.md](SECURE_DEFAULTS.md)).
+- Full default toolsets can overflow small context windows — shrink tools or raise context.
+- Gateway hosts must be able to reach the URL (loopback on a laptop ≠ loopback on a server).
+- Do not commit local URLs with secrets; leave keys empty when the server is authless.
+
+---
+
+## OAuth (login, not long-lived API keys)
+
+Sign in once; Hermes stores refreshable tokens under `$HERMES_HOME` (typically
+`auth.json`, mode `600`). Prefer this over pasting cloud API keys into `.env` for
+laptop / interactive use.
+
+| Provider | ID | How to start |
+|----------|-----|----------------|
+| **Nous Portal** | `nous` | `hermes setup --portal` or `hermes model` → Nous |
+| **OpenAI Codex / ChatGPT** | `openai-codex` | `hermes auth add openai-codex` or `hermes model` |
+| xAI Grok OAuth | `xai-oauth` | `hermes model` / `hermes auth add xai-oauth` |
+| Qwen OAuth | `qwen-oauth` | `hermes auth add qwen-oauth` |
+| MiniMax OAuth | `minimax-oauth` | `hermes auth add minimax-oauth` |
+
+### Recipes (highest leverage)
+
+**Nous Portal (device code):**
+
+```bash
+hermes setup --portal
+# or
+hermes model    # pick Nous Portal → follow device-code prompt
+hermes doctor   # OAuth “not logged in” clears after success
+```
+
+**OpenAI Codex (device code default; browser PKCE optional):**
+
+```bash
+hermes auth add openai-codex
+# Organizations that disable device code:
+hermes auth add openai-codex --browser
+# Over SSH, tunnel the PKCE callback port — see upstream oauth-over-ssh guide
+```
+
+Tokens live in Hermes’ auth store (not `OPENAI_API_KEY`). Optional import from an
+existing Codex CLI `~/.codex/auth.json` when present.
+
+### OAuth vs API key vs AWS role
+
+| Situation | Prefer |
+|-----------|--------|
+| Interactive laptop, Nous / ChatGPT subscription | **OAuth** |
+| Shared server / CI worker in AWS GovCloud | **IAM role / SSO** (Bedrock) |
+| Private GPU box, no cloud | **Local** `/v1` |
+| Automation with a cloud vendor key | API key in `~/.hermes/.env` (`chmod 600`) — last resort for shared hosts |
+
+Doctor may warn “OAuth not logged in” until you opt in — that is expected and
+non-blocking for CLI smoke ([DOCTOR.md](DOCTOR.md)).
+
+---
+
+## AWS Bedrock & Mantle (GovCloud)
+
+OpenAI **ChatGPT** model IDs on Bedrock are **Mantle-only** (including GovCloud).
 
 | Surface | When | Host |
 |---------|------|------|
 | **Bedrock runtime (Converse / AnthropicBedrock)** | Claude, Nova, Llama, most foundation models | `bedrock-runtime[-fips].<region>.amazonaws.com` |
 | **Bedrock Mantle** | OpenAI ChatGPT / Mantle Responses models | `bedrock-mantle.<region>.api.aws/openai/v1` |
 
-`hermes model` → AWS Bedrock:
-
-1. **IAM role / SSO** (recommended) → runtime Converse path  
-2. **Mantle API key** → OpenAI ChatGPT / Mantle-only IDs  
-
-Bare OpenAI Mantle model IDs auto-route to Mantle even when `model.provider: bedrock`.
-
-## GovCloud regions (first-class)
+### GovCloud regions (first-class)
 
 | Region | Runtime | Mantle (OpenAI ChatGPT) |
 |--------|---------|-------------------------|
@@ -36,68 +155,28 @@ bedrock:
   fips: null                   # null = auto (ON for GovCloud, OFF elsewhere)
 ```
 
-FIPS applies to **runtime** hosts only (`bedrock-runtime-fips…`). Mantle stays on
-`bedrock-mantle.<region>.api.aws`.
+FIPS applies to **runtime** hosts only. Mantle stays on `bedrock-mantle.<region>.api.aws`.
 
-## Auth ranking (Nexus secure native)
+### Auth ranking (Bedrock)
 
-Prefer short-lived, auditable credentials — no long-lived keys in shared `.env`:
+1. **IAM role on compute** — EC2 / ECS / Lambda / IRSA  
+2. **IAM Identity Center (SSO)** — `AWS_PROFILE`  
+3. **Assume-role / web identity**  
+4. **Short-lived** `AWS_BEARER_TOKEN_BEDROCK` (Mantle convenience; ≤12h)  
+5. **Long-lived access keys** — last resort  
 
-1. **IAM role on compute** — EC2 instance profile, ECS task role, Lambda role, EKS IRSA  
-2. **IAM Identity Center (SSO)** — `AWS_PROFILE` + short sessions (`aws configure sso`)  
-3. **Assume-role / web identity** — least-privilege Bedrock role via profile or IRSA  
-4. **Short-lived Bedrock API key** — `AWS_BEARER_TOKEN_BEDROCK` (≤12h); required convenience path for some Mantle clients  
-5. **Long-lived access keys** — last resort; avoid on collaborative / gateway hosts  
+`hermes model` → AWS Bedrock: **role/SSO first**, **Mantle API key** for ChatGPT IDs.
 
-Env knobs: `AWS_REGION`, `AWS_PROFILE`, `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`,
-`AWS_BEARER_TOKEN_BEDROCK`, `AWS_WEB_IDENTITY_TOKEN_FILE`, container relative URI.
+---
 
-## Suggested GovCloud profiles
-
-**Claude / Nova on Converse (role/SSO):**
-
-```yaml
-model:
-  provider: bedrock
-  default: anthropic.claude-sonnet-4-6   # use your partition's enabled ID
-bedrock:
-  region: us-gov-west-1
-```
-
-Authenticate with an instance/task role or `export AWS_PROFILE=gov-sso`.
-
-**OpenAI ChatGPT on Mantle:**
-
-```bash
-# short-lived bearer from your admin / Secrets Manager
-export AWS_BEARER_TOKEN_BEDROCK=...
-```
-
-```yaml
-model:
-  provider: bedrock
-  default: openai.gpt-…                # Mantle-only ID for your partition
-bedrock:
-  region: us-gov-west-1
-```
-
-Or run `hermes model` → Bedrock → choose **Mantle API key**.
-
-## IAM (minimum sketch)
-
-Runtime: `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream`,
-`bedrock:ListFoundationModels`, `bedrock:ListInferenceProfiles` (as needed).
-
-Mantle: grant the partition’s **`bedrock-mantle:*`** actions your org documents for
-OpenAI Responses / ChatGPT models (ARNs use `arn:aws-us-gov:bedrock-mantle:…`).
-
-## Verify
+## Verify (no live keys / logins)
 
 ```bash
 source ./activate
-python -c "import pm; pm.sync_venv(['bedrock'], explicit=True)"
-just nexus-bedrock-govcloud    # region/FIPS/Mantle URL helpers (no AWS call)
-hermes model                  # pick Bedrock; set us-gov-west-1
+just nexus-bedrock-govcloud     # GovCloud/FIPS/Mantle URL helpers
+just nexus-providers            # local + OAuth doc/registry markers
+hermes model --help
+hermes auth --help              # OAuth entrypoints present
 ```
 
 ## Related
