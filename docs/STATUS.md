@@ -31,7 +31,7 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 - [x] Minimal CI: `.github/workflows/nexus-smoke.yml` (version + doctor + first-run + secure-defaults + gateway docs + evals smoke + `ui-tui` + protected-fork); local `just nexus-*` recipes
 - [x] Document known doctor warnings ([docs/DOCTOR.md](DOCTOR.md))
 
-**M1 complete. M2 complete. M3 complete.** Provider curation: Bedrock/Mantle GovCloud + local + OAuth recipes. Next: **M4 Desktop** (later) or more providers.
+**M1 complete. M2 complete. M3 complete.** Provider curation: Bedrock/Mantle · local · OAuth · OpenRouter. Next: **M4 Desktop** (later).
 
 ### M2 — Harness hardening
 
@@ -51,7 +51,8 @@ Early bootstrap of **nexus-agent-harness** as an MIT-licensed Hermes fork. Focus
 
 - [x] AWS Bedrock + Mantle GovCloud (`us-gov-west-1` / `us-gov-east-1`), FIPS auto-on for GovCloud runtime, role/SSO-first auth docs — [docs/PROVIDERS.md](PROVIDERS.md); `just nexus-bedrock-govcloud`
 - [x] Local OpenAI-compatible + OAuth recipes (Ollama / LM Studio / custom:local; Nous + Codex) — [docs/PROVIDERS.md](PROVIDERS.md); `just nexus-providers`
-- [ ] Additional provider recipes (OpenRouter, more OAuth vendors) — optional later
+- [x] OpenRouter aggregator recipe (`OPENROUTER_API_KEY`, `openrouter/auto` / pareto-code) — [docs/PROVIDERS.md](PROVIDERS.md); gated by `just nexus-providers`
+- [ ] Additional OAuth vendors / niche providers — optional later
 
 ### M4 — Desktop Win/Mac (later)
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Verify Nexus local + OAuth provider curation markers (no live logins or network).
+"""Verify Nexus provider curation markers (no live logins, keys, or network).
 
 Checks:
-  1. docs/PROVIDERS.md covers local + OAuth + Bedrock triangle
-  2. Registry overlays for nous / openai-codex / lmstudio / custom aliases
+  1. docs/PROVIDERS.md covers Bedrock · local · OAuth · OpenRouter
+  2. Registry overlays for nous / openai-codex / lmstudio / custom / openrouter
   3. ``hermes auth --help`` and ``hermes model --help`` load
 
 Usage:
@@ -53,14 +53,19 @@ def main() -> int:
         "openai-codex",
         "hermes setup --portal",
         "hermes auth add openai-codex",
+        "OpenRouter",
+        "OPENROUTER_API_KEY",
+        "openrouter/auto",
+        "openrouter/pareto-code",
         "us-gov-west-1",
         "Mantle",
     ):
         if marker not in docs:
             raise SystemExit(f"docs/PROVIDERS.md missing marker: {marker}")
-    print("✓ docs/PROVIDERS.md local + OAuth recipes present")
+    print("✓ docs/PROVIDERS.md recipes present (local + OAuth + OpenRouter)")
 
     from hermes_cli.providers import ALIASES, HERMES_OVERLAYS, _ALIAS_GROUPS, _LABEL_OVERRIDES
+    from hermes_constants import OPENROUTER_BASE_URL
 
     nous = HERMES_OVERLAYS.get("nous")
     if nous is None or getattr(nous, "auth_type", "") != "oauth_device_code":
@@ -79,7 +84,15 @@ def main() -> int:
             raise SystemExit(f"alias {alias!r} should resolve to custom, got {ALIASES.get(alias)!r}")
     if "nous" not in _LABEL_OVERRIDES.get("nous", "").lower():
         raise SystemExit(f"nous label unexpected: {_LABEL_OVERRIDES.get('nous')!r}")
-    print("✓ provider registry overlays OK (nous / openai-codex / lmstudio / custom)")
+
+    or_overlay = HERMES_OVERLAYS.get("openrouter")
+    if or_overlay is None or not getattr(or_overlay, "is_aggregator", False):
+        raise SystemExit(f"openrouter should be an aggregator overlay: {or_overlay!r}")
+    if getattr(or_overlay, "base_url_env_var", "") != "OPENROUTER_BASE_URL":
+        raise SystemExit(f"openrouter base_url_env_var unexpected: {or_overlay!r}")
+    if "openrouter.ai" not in OPENROUTER_BASE_URL:
+        raise SystemExit(f"OPENROUTER_BASE_URL unexpected: {OPENROUTER_BASE_URL!r}")
+    print("✓ provider registry overlays OK (nous / openai-codex / lmstudio / custom / openrouter)")
 
     auth_help = _hermes("auth", "--help").lower()
     if "auth" not in auth_help:

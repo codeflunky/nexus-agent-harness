@@ -1,8 +1,8 @@
 # Provider curation (Nexus)
 
 Nexus keeps upstream providers, then **curates** the paths that fit a collaborative
-harness: **AWS Bedrock / Mantle (GovCloud)**, **local OpenAI-compatible**, and
-**OAuth logins** (short-lived tokens, not pasted long-lived keys).
+harness: **AWS Bedrock / Mantle (GovCloud)**, **local OpenAI-compatible**,
+**OAuth logins**, and **OpenRouter** (one API key → many models).
 
 | Need | Path |
 |------|------|
@@ -10,9 +10,11 @@ harness: **AWS Bedrock / Mantle (GovCloud)**, **local OpenAI-compatible**, and
 | GovCloud **ChatGPT** models | Bedrock **Mantle** (bearer or SigV4) |
 | Air-gapped / private GPU | **Local** OpenAI-compatible (`/v1`) |
 | Cloud login without API keys | **OAuth** (Nous Portal, OpenAI Codex, …) |
+| Day-one multi-model with one key | **OpenRouter** (`OPENROUTER_API_KEY`) |
 
 Upstream deep dives: [integrations/providers.md](../website/docs/integrations/providers.md),
-[aws-bedrock.md](../website/docs/guides/aws-bedrock.md).
+[aws-bedrock.md](../website/docs/guides/aws-bedrock.md),
+[provider routing](../website/docs/user-guide/features/provider-routing.md).
 
 ---
 
@@ -123,10 +125,67 @@ existing Codex CLI `~/.codex/auth.json` when present.
 | Interactive laptop, Nous / ChatGPT subscription | **OAuth** |
 | Shared server / CI worker in AWS GovCloud | **IAM role / SSO** (Bedrock) |
 | Private GPU box, no cloud | **Local** `/v1` |
-| Automation with a cloud vendor key | API key in `~/.hermes/.env` (`chmod 600`) — last resort for shared hosts |
+| Multi-vendor models from one key (non-GovCloud) | **OpenRouter** |
+| Automation with a single-vendor key | API key in `~/.hermes/.env` (`chmod 600`) — last resort for shared hosts |
 
 Doctor may warn “OAuth not logged in” until you opt in — that is expected and
 non-blocking for CLI smoke ([DOCTOR.md](DOCTOR.md)).
+
+---
+
+## OpenRouter (aggregator)
+
+OpenRouter is a first-class **API-key aggregator**: one `OPENROUTER_API_KEY` reaches
+many upstream models through `https://openrouter.ai/api/v1`. Good for day-one
+multi-model access — **not** a GovCloud / FedRAMP plane (use Bedrock/Mantle there).
+
+### Baseline recipe
+
+```bash
+# Key from https://openrouter.ai/keys — store only in Hermes home
+printf 'OPENROUTER_API_KEY=sk-or-...\n' >> "${HERMES_HOME:-$HOME/.hermes}/.env"
+chmod 600 "${HERMES_HOME:-$HOME/.hermes}/.env"
+
+hermes config set model.provider openrouter
+hermes config set model.default openrouter/auto
+# or: hermes model  →  OpenRouter  →  pick a slug
+```
+
+```yaml
+model:
+  provider: openrouter
+  default: openrouter/auto          # or anthropic/claude-sonnet-4.6, google/gemini-…, etc.
+# optional mirror/proxy:
+# OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+```
+
+Also covered in [GETTING_STARTED.md](GETTING_STARTED.md) headless setup.
+
+### Recommended Nexus defaults
+
+| Goal | Model / knob |
+|------|----------------|
+| Quick start / let OpenRouter choose | `openrouter/auto` |
+| Pin a vendor model | `anthropic/…`, `google/…`, `openai/…` (OpenRouter slugs) |
+| Coding-oriented routing | `openrouter/pareto-code` + `openrouter.min_coding_score` (default `0.65`) |
+| Aux / fallback tasks | Often fall through OpenRouter when the key is present |
+
+```yaml
+openrouter:
+  response_cache: true
+  response_cache_ttl: 300
+  min_coding_score: 0.65    # used with openrouter/pareto-code
+```
+
+Optional provider-order / routing prefs: see upstream
+[provider routing](../website/docs/user-guide/features/provider-routing.md).
+
+### Security posture (Nexus)
+
+- Keep the key in `$HERMES_HOME/.env` only (`chmod 600`); never commit it.
+- Prefer **OAuth** or **Bedrock role/SSO** when those fit — OpenRouter is convenience, not regulated isolation.
+- Do **not** use OpenRouter for GovCloud-bound inference; data leaves the AWS Gov partition.
+- On shared/gateway hosts, treat the key like any long-lived secret (rotate; avoid world-readable homes).
 
 ---
 
@@ -174,7 +233,7 @@ FIPS applies to **runtime** hosts only. Mantle stays on `bedrock-mantle.<region>
 ```bash
 source ./activate
 just nexus-bedrock-govcloud     # GovCloud/FIPS/Mantle URL helpers
-just nexus-providers            # local + OAuth doc/registry markers
+just nexus-providers            # local + OAuth + OpenRouter markers (no live key)
 hermes model --help
 hermes auth --help              # OAuth entrypoints present
 ```

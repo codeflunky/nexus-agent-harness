@@ -82,6 +82,9 @@ PROTECTED_FORK_CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
             "OAuth",
             "openai-codex",
             "custom:local",
+            "OpenRouter",
+            "OPENROUTER_API_KEY",
+            "openrouter/auto",
         ),
     ),
     (
